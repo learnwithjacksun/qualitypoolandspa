@@ -99,11 +99,10 @@ export default function Contact() {
 
         <div className="space-y-2">
           <h2 className="text-2xl font-space font-semibold text-primary md:text-3xl">
-            Contact Us
+            Get in touch
           </h2>
           <p className="max-w-2xl text-sm text-main/75 md:text-base">
-            Tell us what you need and our team will guide you to the right pool
-            and spa solution for your project.
+            We're here to help you with any questions or concerns you may have.
           </p>
         </div>
 

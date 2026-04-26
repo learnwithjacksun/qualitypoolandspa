@@ -11,6 +11,12 @@ export const libraries = [
     "Framer Motion",
 ]
 
+export const navLinks = [
+    { to: "/", label: "Home" },
+    { to: "/categories", label: "Categories" },
+    { to: "/contact", label: "Contact" },
+];
+
 
 export const productCategories = [
     {

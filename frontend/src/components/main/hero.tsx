@@ -1,9 +1,6 @@
 import {
   ShoppingBag,
   ArrowRight,
-  ShieldCheck,
-  Truck,
-  Headset,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -18,7 +15,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-900/65 to-slate-900/40" />
       <div className="main relative grid gap-6 text-white lg:grid-cols-[1.2fr_0.8fr] py-10 md:py-20">
         <div className="space-y-5">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-medium">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-medium backdrop-blur">
             <span className="relative flex size-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75"></span>
               <span className="relative inline-flex size-2 rounded-full bg-green-500"></span>
@@ -46,7 +43,7 @@ export default function Hero() {
             </Link>
             <Link
               to="/categories/hot-tubs"
-              className="inline-flex h-11 btn w-full md:w-auto items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+              className="inline-flex h-11 btn w-full md:w-auto items-center gap-2 rounded-xl border border-white/30 px-5 text-sm font-semibold text-white transition-colors backdrop-blur bg-white/20 hover:bg-white/20"
             >
               Explore hot tubs
               <ArrowRight size={16} />
@@ -54,7 +51,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+        {/* <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
           <div className="rounded-2xl border border-white/25 bg-white/10 p-4 backdrop-blur-md">
             <ShieldCheck size={18} className="mb-2" />
             <p className="text-sm font-semibold">Trusted Quality</p>
@@ -76,7 +73,8 @@ export default function Hero() {
               Need help choosing? Book a call with our team.
             </p>
           </div>
-        </div>
+        </div> */}
+        <div className="hidden md:block"/>
       </div>
     </div>
   );

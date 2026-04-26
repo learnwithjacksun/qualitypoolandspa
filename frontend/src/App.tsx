@@ -2,8 +2,14 @@ import { Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 import { ScrollToTop } from "@/components/ui";
 import { CategoryItems, Categories, Home, Contact } from "@/pages";
+import { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function App() {
+  useEffect(() => {
+    AOS.init();
+  }, []);
   return (
     <>
       <ScrollToTop />

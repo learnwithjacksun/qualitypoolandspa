@@ -1,4 +1,4 @@
-import { BadgeCheck, CreditCard, Mail, PhoneCall, Truck } from "lucide-react";
+import { BadgeCheck, Mail, PhoneCall, Truck } from "lucide-react";
 import { MainLayout } from "@/layouts";
 import { Hero, Collection } from "@/components/main";
 
@@ -36,7 +36,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-line bg-background p-4">
+          {/* <div className="rounded-xl border border-line bg-background p-4">
             <div className="mb-3 flex items-center justify-between">
               <span className="center h-9 w-9 rounded-full bg-blue-500/10 text-blue-500">
                 <CreditCard size={18} />
@@ -52,7 +52,7 @@ export default function Home() {
               Safe payment flow with transparent pricing and no hidden surprises
               at checkout.
             </p>
-          </div>
+          </div> */}
 
           <div className="rounded-xl border border-line bg-background p-4">
             <div className="mb-3 flex items-center justify-between">
