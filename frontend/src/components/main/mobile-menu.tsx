@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface MobileMenuProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ onClose, isOpen }: MobileMenuProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -47,7 +49,7 @@ export default function MobileMenu({ onClose, isOpen }: MobileMenuProps) {
                 `text-xl w-full block text-center py-2 font-light transition ${isActive ? "border-b-2 border-white/30 text-white pb-1 bg-white/10" : "text-white hover:bg-white/10"}`
               }
             >
-              {link.label}
+              {t(link.labelKey, link.fallback)}
             </NavLink>
           </li>
         ))}

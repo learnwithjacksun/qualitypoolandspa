@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { useTranslation } from 'react-i18next'
 
 const SelectWithIcon = ({
   icon,
@@ -8,6 +9,7 @@ const SelectWithIcon = ({
   defaultValue,
   ...props
 }: SelectWithIconProps) => {
+  const { t } = useTranslation()
   return (
     <div className="space-y-2">
       <label htmlFor={props.id} className="text-sm text-muted font-medium">
@@ -21,7 +23,7 @@ const SelectWithIcon = ({
           {...props}
           className={`pl-12 h-11 w-full rounded-lg text-sm border border-line focus:border-main appearance-none  ${props.className}`}
         >
-          <option value="">{defaultValue || `Select ${label}`}</option>
+          <option value="">{defaultValue || t('selectLabel', 'Select {{label}}', { label })}</option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

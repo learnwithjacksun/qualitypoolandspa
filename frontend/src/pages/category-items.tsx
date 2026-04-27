@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { MainLayout } from "@/layouts";
+import { useTranslation } from 'react-i18next'
 
 const categoryLabelBySlug: Record<string, string> = {
   "hot-tubs": "Hot Tubs",
@@ -15,6 +16,7 @@ const categoryLabelBySlug: Record<string, string> = {
 };
 
 export default function CategoryItems() {
+  const { t } = useTranslation()
   const { categorySlug = "" } = useParams<{ categorySlug: string }>();
   const categoryName = categoryLabelBySlug[categorySlug] ?? "Category";
 
@@ -23,10 +25,10 @@ export default function CategoryItems() {
       <section className="main py-10 md:py-16">
         <div className="mb-4 flex items-center gap-2 text-sm text-muted">
           <Link to="/" className="hover:text-primary">
-            Home
+            {t('home', 'Home')}
           </Link>
           <ChevronRight size={14} />
-          <Link to="/categories" className="hover:text-primary">Categories</Link>
+          <Link to="/categories" className="hover:text-primary">{t('categories', 'Categories')}</Link>
           <ChevronRight size={14} />
           <span className="font-medium text-main">{categoryName}</span>
         </div>
@@ -35,8 +37,7 @@ export default function CategoryItems() {
           {categoryName}
         </h1>
         <p className="mt-3 max-w-2xl text-main/80">
-          Full list of available {categoryName.toLowerCase()} products will be
-          displayed here. Use this page to browse all items in this category.
+          {t('fullListOfAvailable', 'Full list of available')} {categoryName.toLowerCase()} {t('productsWillBeDisplayedHereUseThisPageToBrowseAllItemsInThisCategory', 'products will be\r\n          displayed here. Use this page to browse all items in this category.')}
         </p>
       </section>
     </MainLayout>

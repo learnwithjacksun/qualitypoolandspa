@@ -14,6 +14,8 @@ import { ButtonWithLoader, InputWithoutIcon, SelectWithoutIcon } from "@/compone
 import { contactSchema, type ContactSchema } from "@/schemas/contact";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from 'react-i18next'
+import i18next from 'i18next'
 
 interface OfficeLocation {
   name: string;
@@ -28,34 +30,34 @@ interface OfficeLocation {
 
 const officeLocations: OfficeLocation[] = [
   {
-    name: "Marbella",
+    name: i18next.t('marbella', 'Marbella'),
     address:
-      "Quality Pool & Spa, Complejo Lidl, C. Beamar de Calahonda, local 5, 29649 Calahonda, Malaga, Spain",
+      i18next.t('qualityPoolSpaComplejoLidlCBeamarDeCalahondaLocal529649CalahondaMalagaSpain', 'Quality Pool & Spa, Complejo Lidl, C. Beamar de Calahonda, local 5, 29649 Calahonda, Malaga, Spain'),
     email: "info@qualitypoolspa.es",
-    phone: "+34 951 17 28 08",
-    whatsapp: "+34 648 12 63 77",
+    phone: i18next.t('34951172808', '+34 951 17 28 08'),
+    whatsapp: i18next.t('34648126377', '+34 648 12 63 77'),
     facebook: "qualitypoolspain",
     instagram: "@qualitypoolspa.es",
     youtube: "@qualitypoolspa.es",
   },
   {
-    name: "Mallorca",
+    name: i18next.t('mallorca', 'Mallorca'),
     address:
-      "Qualitypool & Spa Mallorca, Carrer d'Anselm Turmeda, 9, Nord, 07010 Palma, Illes Balears, Spain",
+      i18next.t('qualitypoolSpaMallorcaCarrerDanselmTurmeda9Nord07010PalmaIllesBalearsSpain', 'Qualitypool & Spa Mallorca, Carrer d\'Anselm Turmeda, 9, Nord, 07010 Palma, Illes Balears, Spain'),
     email: "estepona@qualitypoolspa.es",
-    phone: "+34 951 17 28 08",
+    phone: i18next.t('34951172808', '+34 951 17 28 08'),
     whatsapp: "+34 648448875",
     facebook: "qualitypoolspain",
     instagram: "@qualitypoolspa.es",
     youtube: "@qualitypoolspa.es",
   },
   {
-    name: "Quality Pools Estepona",
+    name: i18next.t('qualityPoolsEstepona', 'Quality Pools Estepona'),
     address:
-      "Qualitypool & Spa Estepona, Av. Puerta del Mar, 59, 29680 Estepona, Malaga, Spain",
+      i18next.t('qualitypoolSpaEsteponaAvPuertaDelMar5929680EsteponaMalagaSpain', 'Qualitypool & Spa Estepona, Av. Puerta del Mar, 59, 29680 Estepona, Malaga, Spain'),
     email: "estepona@qualitypoolspa.es",
-    phone: "+34 951 17 28 08",
-    whatsapp: "+34 638 959 111",
+    phone: i18next.t('34951172808', '+34 951 17 28 08'),
+    whatsapp: i18next.t('34638959111', '+34 638 959 111'),
     facebook: "qualitypoolspain",
     instagram: "@qualitypoolspa.es",
     youtube: "@qualitypoolspa.es",
@@ -63,6 +65,7 @@ const officeLocations: OfficeLocation[] = [
 ];
 
 export default function Contact() {
+  const { t } = useTranslation()
   const [selectedLocationIndex, setSelectedLocationIndex] = useState(0);
   const selectedLocation = officeLocations[selectedLocationIndex];
 
@@ -91,42 +94,42 @@ export default function Contact() {
       <div className="main mt-10 space-y-8">
         <div className="mb-4 flex items-center gap-2 text-sm text-muted">
           <Link to="/" className="hover:text-primary">
-            Home
+            {t('home', 'Home')}
           </Link>
           <ChevronRight size={14} />
-          <span className="font-medium text-main">Contact</span>
+          <span className="font-medium text-main">{t('contact', 'Contact')}</span>
         </div>
 
         <div className="space-y-2">
           <h2 className="text-2xl font-space font-semibold text-primary md:text-3xl">
-            Get in touch
+            {t('getInTouch', 'Get in touch')}
           </h2>
           <p className="max-w-2xl text-sm text-main/75 md:text-base">
-            We're here to help you with any questions or concerns you may have.
+            {t('wereHereToHelpYouWithAnyQuestionsOrConcernsYouMayHave', 'We\'re here to help you with any questions or concerns you may have.')}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border border-line bg-background p-5 md:p-6 h-fit">
-            <h3 className="text-lg font-medium font-space">Send us a message</h3>
+            <h3 className="text-lg font-medium font-space">{t('sendUsAMessage', 'Send us a message')}</h3>
             <p className="mt-1 text-sm text-muted">
-              Fill out the form and we will get back to you shortly.
+              {t('fillOutTheFormAndWeWillGetBackToYouShortly', 'Fill out the form and we will get back to you shortly.')}
             </p>
 
             <form className="mt-5 space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <InputWithoutIcon
                   type="text"
-                  label="First Name"
-                  placeholder="e.g John"
+                  label={t('firstName', 'First Name')}
+                  placeholder={t('egJohn', 'e.g John')}
                   className="h-11 w-full rounded-xl border border-line bg-background px-3 text-sm placeholder:text-muted focus:border-primary/50"
                   {...register("firstName")}
                   error={errors.firstName?.message}
                 />
                 <InputWithoutIcon
                   type="text"
-                  label="Last Name"
-                  placeholder="e.g Doe"
+                  label={t('lastName', 'Last Name')}
+                  placeholder={t('egDoe', 'e.g Doe')}
                   {...register("lastName")}
                   error={errors.lastName?.message}
                   className="h-11 w-full rounded-xl border border-line bg-background px-3 text-sm placeholder:text-muted focus:border-primary/50"
@@ -145,7 +148,7 @@ export default function Contact() {
                 <InputWithoutIcon
                   type="tel"
                   label="Phone"
-                  placeholder="+34 600 00 00 00"
+                  placeholder={t('34600000000', '+34 600 00 00 00')}
                   {...register("phone")}
                   error={errors.phone?.message}
                   className="h-11 w-full rounded-xl border border-line bg-background px-3 text-sm placeholder:text-muted focus:border-primary/50"
@@ -153,7 +156,7 @@ export default function Contact() {
               </div>
 
               <SelectWithoutIcon
-                label="Preferred Branch"
+                label={t('preferredBranch', 'Preferred Branch')}
                 defaultValue={selectedLocation.name}
                 {...register("branch")}
                 error={errors.branch?.message}
@@ -165,9 +168,9 @@ export default function Contact() {
               />
 
               <label className="space-y-1.5">
-                <span className="text-sm font-medium text-muted">Message</span>
+                <span className="text-sm font-medium text-muted">{t('message', 'Message')}</span>
                 <textarea
-                  placeholder="Tell us what products or services you need..."
+                  placeholder={t('tellUsWhatProductsOrServicesYouNeed', 'Tell us what products or services you need...')}
                   rows={5}
                   {...register("message")}
                   
@@ -188,10 +191,10 @@ export default function Contact() {
           <div className="space-y-4">
             <div className="rounded-2xl border border-line bg-background p-5 shadow-sm md:p-6">
               <h3 className="text-lg font-medium font-space">
-                Our Offices
+                {t('ourOffices', 'Our Offices')}
               </h3>
               <p className="mt-1 text-sm text-muted">
-                Choose a location to view full contact details and map.
+                {t('chooseALocationToViewFullContactDetailsAndMap', 'Choose a location to view full contact details and map.')}
               </p>
 
               <div className="mt-4 flex flex-wrap gap-2">
@@ -239,9 +242,7 @@ export default function Contact() {
                   rel="noreferrer"
                   className="flex items-center gap-2.5 transition-colors hover:text-primary"
                 >
-                  <PhoneCall size={16} className="shrink-0 text-primary" />
-                  WhatsApp: {selectedLocation.whatsapp}
-                </a>
+                  <PhoneCall size={16} className="shrink-0 text-primary" />{t('whatsappWhatsapp', 'WhatsApp: {{whatsapp}}', { whatsapp: selectedLocation.whatsapp })}</a>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-main/80">
@@ -277,7 +278,7 @@ export default function Contact() {
 
             <div className="overflow-hidden rounded-2xl border border-line bg-background shadow-sm">
               <iframe
-                title={`Google map for ${selectedLocation.name}`}
+                title={t('googleMapForName', 'Google map for {{name}}', { name: selectedLocation.name })}
                 src={selectedMapUrl}
                 width="100%"
                 height="320"

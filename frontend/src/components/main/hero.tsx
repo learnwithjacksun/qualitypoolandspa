@@ -3,13 +3,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next'
 
 export default function Hero() {
+  const { t } = useTranslation()
   return (
     <div className="relative overflow-hidden min-h-[500px] flex items-center">
       <img
         src="/background.png"
-        alt="Premium pool and spa setup"
+        alt={t('premiumPoolAndSpaSetup', 'Premium pool and spa setup')}
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-900/65 to-slate-900/40" />
@@ -20,17 +22,15 @@ export default function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75"></span>
               <span className="relative inline-flex size-2 rounded-full bg-green-500"></span>
             </span>
-            West Coast Sweden Pool & Spa Shop
+            {t('westCoastSwedenPoolSpaShop', 'West Coast Sweden Pool & Spa Shop')}
           </span>
 
           <h1 className="max-w-2xl text-3xl font-space font-bold leading-tight md:text-5xl">
-            Build your dream pool and spa setup with pro-grade products.
+            {t('buildYourDreamPoolAndSpaSetupWithProgradeProducts', 'Build your dream pool and spa setup with pro-grade products.')}
           </h1>
 
           <p className="max-w-2xl text-sm text-white/85 md:text-base">
-            Shop trusted equipment, accessories, and maintenance essentials for
-            hot tubs, pools, saunas, and spa systems. Compare categories and
-            order online with confidence.
+            {t('shopTrustedEquipmentAccessoriesAndMaintenanceEssentialsForHotTubsPoolsSaunasAndSpaSystemsCompareCategoriesAndOrderOnlineWithConfidence', 'Shop trusted equipment, accessories, and maintenance essentials for\r\n            hot tubs, pools, saunas, and spa systems. Compare categories and\r\n            order online with confidence.')}
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -38,14 +38,14 @@ export default function Hero() {
               to="/categories"
               className="inline-flex h-11 btn w-full md:w-auto items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-primary transition-transform hover:-translate-y-0.5"
             >
-              Shop Now
+              {t('shopNow', 'Shop Now')}
               <ShoppingBag size={16} />
             </Link>
             <Link
               to="/categories/hot-tubs"
               className="inline-flex h-11 btn w-full md:w-auto items-center gap-2 rounded-xl border border-white/30 px-5 text-sm font-semibold text-white transition-colors backdrop-blur bg-white/20 hover:bg-white/20"
             >
-              Explore hot tubs
+              {t('exploreHotTubs', 'Explore hot tubs')}
               <ArrowRight size={16} />
             </Link>
           </div>

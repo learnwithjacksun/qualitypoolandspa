@@ -12,20 +12,32 @@ import {
 } from "lucide-react";
 import { MobileMenu } from ".";
 import { navLinks } from "@/constants/data";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-
-const languages = [
-  { code: "EN", name: "English" },
-  { code: "FR", name: "French" },
-  { code: "ES", name: "Spanish" },
-  { code: "DE", name: "German" },
-  { code: "SV", name: "Swedish" },
-  { code: "RU", name: "Russian" },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Header() {
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const activeLanguage = i18n.resolvedLanguage ?? i18n.language ?? "en";
+  const languages = useMemo(
+    () => [
+      { code: "en", name: t("english", "English") },
+      { code: "fr", name: t("french", "French") },
+      { code: "es", name: t("spanish", "Spanish") },
+      { code: "de", name: t("german", "German") },
+      { code: "sv", name: t("swedish", "Swedish") },
+      { code: "ru", name: t("russian", "Russian") },
+    ],
+    [t]
+  );
+
+  const handleLanguageChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    await i18n.changeLanguage(event.target.value);
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full">
@@ -40,8 +52,7 @@ export default function Header() {
                 rel="noreferrer"
                 className="flex items-center gap-2 text-nowrap hover:text-white/80 transition-colors"
               >
-                <MapPin size={14} className="shrink-0" /> Calahonda, Marbella,
-                Mallorca, Estepona
+                <MapPin size={14} className="shrink-0" /> {t('calahondaMarbellaMallorcaEstepona', 'Calahonda, Marbella,\r\n                Mallorca, Estepona')}
               </a>
               <a
                 href="mailto:info@qualitypoolspa.es"
@@ -59,7 +70,7 @@ export default function Header() {
                 href="tel:+34951172808"
                 className="flex items-center gap-1 font-space font-medium underline text-primary px-3 py-1.5 text-xs transition hover:opacity-90"
               >
-                <PhoneCall size={14} className="shrink-0" /> Book a Call
+                <PhoneCall size={14} className="shrink-0" /> {t('bookACall', 'Book a Call')}
               </a>
               {/* Socials */}
               <div className="flex items-center gap-4 text-gray-500">
@@ -90,7 +101,7 @@ export default function Header() {
             >
               <img
                 src="/logo.png"
-                alt="Quality Pool & Spa"
+                alt={t('qualityPoolSpa', 'Quality Pool & Spa')}
                 className="h-5 md:h-7 w-auto"
               />
             </Link>
@@ -110,7 +121,7 @@ export default function Header() {
                         }`
                       }
                     >
-                      {link.label}
+                      {t(link.labelKey, link.fallback)}
                     </NavLink>
                   </li>
                 ))}
@@ -120,11 +131,16 @@ export default function Header() {
                 <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 shrink-0 z-10" />
                 <select
                   className="h-10 appearance-none pl-8 pr-10 rounded-full border border-white/35 bg-white/10 text-sm font-medium text-white backdrop-blur-md transition-all hover:bg-white/15 focus-within:ring-2 focus-within:ring-white/70"
-                  aria-label="Choose language"
-                  defaultValue="EN"
+                  aria-label={t("chooseLanguage", "Choose language")}
+                  value={activeLanguage}
+                  onChange={handleLanguageChange}
                 >
                   {languages.map((language) => (
-                    <option className="text-black" key={language.code} value={language.code}>
+                    <option
+                      className="text-black"
+                      key={language.code}
+                      value={language.code}
+                    >
                       {language.name}
                     </option>
                   ))}
@@ -141,12 +157,17 @@ export default function Header() {
                 <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 shrink-0 z-10" />
                 <select
                   className="h-10 appearance-none pl-8 pr-10 rounded-full border border-white/35 bg-white/10 text-sm font-medium text-white backdrop-blur-md transition-all hover:bg-white/15 focus-within:ring-2 focus-within:ring-white/70"
-                  aria-label="Choose language"
-                  defaultValue="EN"
+                  aria-label={t("chooseLanguage", "Choose language")}
+                  value={activeLanguage}
+                  onChange={handleLanguageChange}
                 >
                   {languages.map((language) => (
-                    <option className="text-black" key={language.code} value={language.code}>
-                      {language.code}
+                    <option
+                      className="text-black"
+                      key={language.code}
+                      value={language.code}
+                    >
+                      {language.code.toUpperCase()}
                     </option>
                   ))}
                 </select>

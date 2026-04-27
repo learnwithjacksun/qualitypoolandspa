@@ -1,57 +1,63 @@
 import { useMemo, useState } from "react";
 import { MainLayout } from "@/layouts";
-import { ArrowUpRight, ChevronRight, Search } from "lucide-react";
+import { ChevronRight, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { productCategories } from "@/constants/data";
+import { useTranslation } from "react-i18next";
 
 type CategoryFilter = "all" | "wellness" | "pool-build" | "maintenance";
 
 
 
-const filterButtons: ReadonlyArray<{ key: CategoryFilter; label: string }> = [
-  { key: "all", label: "All Categories" },
-  { key: "wellness", label: "Wellness" },
-  { key: "pool-build", label: "Pool Build" },
-  { key: "maintenance", label: "Maintenance" },
-];
+
 
 export default function Categories() {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState("");
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>("all");
-
+  const filterButtons: ReadonlyArray<{ key: CategoryFilter; label: string }> = [
+    { key: "all", label: t("allCategories", "All Categories") },
+    { key: "wellness", label: t("wellness", "Wellness") },
+    { key: "pool-build", label: t("poolBuild", "Pool Build") },
+    { key: "maintenance", label: t("maintenance", "Maintenance") },
+  ];
   const filteredCategories = useMemo(() => {
     const normalizedSearch = searchValue.trim().toLowerCase();
 
     return productCategories.filter((category) => {
       const matchesFilter =
         activeFilter === "all" || category.segment === activeFilter;
+      const categoryName = t(category.nameKey, category.nameFallback).toLowerCase();
+      const categoryDescription = t(
+        category.descriptionKey,
+        category.descriptionFallback
+      ).toLowerCase();
       const matchesSearch =
         normalizedSearch.length === 0 ||
-        category.name.toLowerCase().includes(normalizedSearch) ||
-        category.description.toLowerCase().includes(normalizedSearch);
+        categoryName.includes(normalizedSearch) ||
+        categoryDescription.includes(normalizedSearch);
 
       return matchesFilter && matchesSearch;
     });
-  }, [activeFilter, searchValue]);
+  }, [activeFilter, searchValue, t]);
 
   return (
     <MainLayout>
       <div className="main mt-10 space-y-8">
         <div className="mb-4 flex items-center gap-2 text-sm text-muted">
           <Link to="/" className="hover:text-primary">
-            Home
+            {t('home', 'Home')}
           </Link>
           <ChevronRight size={14} />
-          
-          <span className="font-medium text-main">Categories</span>
+
+          <span className="font-medium text-main">{t('categories', 'Categories')}</span>
         </div>
         <div className="space-y-2">
           <h2 className="text-2xl font-space font-semibold text-primary md:text-3xl">
-            Shop by category
+            {t('shopByCategory', 'Shop by category')}
           </h2>
           <p className="max-w-2xl text-sm text-main/75 md:text-base">
-            Browse our full range of pool and spa categories to find the right
-            equipment, accessories, and treatment products.
+            {t('browseOurFullRangeOfPoolAndSpaCategoriesToFindTheRightEquipmentAccessoriesAndTreatmentProducts', 'Browse our full range of pool and spa categories to find the right\r\n            equipment, accessories, and treatment products.')}
           </p>
         </div>
 
@@ -65,7 +71,7 @@ export default function Categories() {
               type="text"
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search categories (e.g. heat pumps, filters, saunas)"
+              placeholder={t('searchCategoriesEgHeatPumpsFiltersSaunas', 'Search categories (e.g. heat pumps, filters, saunas)')}
               className="h-11 w-full rounded-xl border border-line bg-background pl-10 pr-4 text-sm text-main placeholder:text-muted focus:border-primary/40"
             />
           </label>
@@ -91,41 +97,42 @@ export default function Categories() {
             })}
           </div>
 
-          <p className="text-xs text-muted">
-            Showing {filteredCategories.length} of {productCategories.length}{" "}
+          <p className="text-xs text-muted">{t('showingLengthOfLength2', 'Showing {{length}} of {{length2}}', { length: filteredCategories.length, length2: productCategories.length })}{" "}
             categories
           </p>
         </div>
 
         {filteredCategories.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-5 grid-cols-2 xl:grid-cols-3">
             {filteredCategories.map((category) => (
               <Link
                 key={category.slug}
                 to={`/categories/${category.slug}`}
-                className="group relative overflow-hidden rounded-2xl border border-line bg-background shadow-sm transition-all duration-300"
+                className="group relative overflow-hidden rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1 flex flex-col"
               >
                 <div className="aspect-[16/10] overflow-hidden rounded-xl">
                   <img
                     src={category.image}
-                    alt={category.name}
+                    alt={t(category.nameKey, category.nameFallback)}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>
 
-                <div className="mt-4 flex items-start justify-between gap-3 px-4 pb-4">
+                <div className="mt-4 flex items-start justify-between gap-3 px-2 md:px-4 pb-4 relative">
                   <div className="space-y-1.5">
                     <h3 className="text-base font-semibold text-primary md:text-lg">
-                      {category.name}
+                      {t(category.nameKey, category.nameFallback)}
                     </h3>
-                    <p className="text-sm leading-relaxed text-main/75">
-                      {category.description}
+                    <p className="text-sm leading-relaxed text-main/75 line-clamp-2 md:line-clamp-none">
+                      {t(category.descriptionKey, category.descriptionFallback)}
                     </p>
                   </div>
-                  <span className="center mt-0.5 h-9 w-9 shrink-0 rounded-full bg-primary/10 text-primary transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                    <ArrowUpRight size={16} />
-                  </span>
+                </div>
+
+                <div className="flex items-center justify-center bg-secondary text-sm text-primary font-medium font-space gap-2 px-3 md:px-4 py-4">
+                  <p>{t('view', 'View')}</p>
+                  <ChevronRight size={16} />
                 </div>
               </Link>
             ))}
@@ -133,10 +140,10 @@ export default function Categories() {
         ) : (
           <div className="rounded-2xl border border-dashed border-line bg-background px-6 py-10 text-center">
             <p className="text-base font-semibold text-primary">
-              No categories match your search
+              {t('noCategoriesMatchYourSearch', 'No categories match your search')}
             </p>
             <p className="mt-1 text-sm text-muted">
-              Try another keyword or switch to a different filter.
+              {t('tryAnotherKeywordOrSwitchToADifferentFilter', 'Try another keyword or switch to a different filter.')}
             </p>
             <button
               type="button"
@@ -146,7 +153,7 @@ export default function Categories() {
               }}
               className="mt-4 rounded-full bg-primary px-4 py-2 text-sm font-medium text-background"
             >
-              Reset filters
+              {t('resetFilters', 'Reset filters')}
             </button>
           </div>
         )}

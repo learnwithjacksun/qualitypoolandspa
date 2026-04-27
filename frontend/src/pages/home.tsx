@@ -1,8 +1,10 @@
 import { BadgeCheck, Mail, PhoneCall, Truck } from "lucide-react";
 import { MainLayout } from "@/layouts";
 import { Hero, Collection } from "@/components/main";
+import { useTranslation } from 'react-i18next'
 
 export default function Home() {
+  const { t } = useTranslation()
   return (
     <MainLayout>
       <Hero />
@@ -10,10 +12,10 @@ export default function Home() {
       <div className="main rounded-2xl border border-line bg-secondary/50 p-4 md:p-6">
         <div className="mb-4 flex items-center justify-between gap-3 pb-4">
           <p className="text-sm font-semibold font-space text-primary md:text-base">
-            Why customers shop with Quality Pool & Spa
+            {t('whyCustomersShopWithQualityPoolSpa', 'Why customers shop with Quality Pool & Spa')}
           </p>
           <span className="hidden md:block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            Trusted ecommerce experience
+            {t('trustedEcommerceExperience', 'Trusted ecommerce experience')}
           </span>
         </div>
 
@@ -24,15 +26,14 @@ export default function Home() {
                 <BadgeCheck size={18} />
               </span>
               <span className="text-xs font-semibold text-green-600">
-                Verified
+                {t('verified', 'Verified')}
               </span>
             </div>
             <p className="text-sm font-semibold text-main">
-              Curated equipment catalog
+              {t('curatedEquipmentCatalog', 'Curated equipment catalog')}
             </p>
             <p className="mt-1.5 text-xs leading-relaxed text-muted">
-              Carefully selected products for performance, durability, and easy
-              maintenance.
+              {t('carefullySelectedProductsForPerformanceDurabilityAndEasyMaintenance', 'Carefully selected products for performance, durability, and easy\r\n              maintenance.')}
             </p>
           </div>
 
@@ -60,15 +61,14 @@ export default function Home() {
                 <Truck size={18} />
               </span>
               <span className="text-xs font-semibold text-green-600">
-                Reliable
+                {t('reliable', 'Reliable')}
               </span>
             </div>
             <p className="text-sm font-semibold text-main">
-              Delivery across service areas
+              {t('deliveryAcrossServiceAreas', 'Delivery across service areas')}
             </p>
             <p className="mt-1.5 text-xs leading-relaxed text-muted">
-              Fast dispatch for essential items and smooth logistics for larger
-              equipment orders.
+              {t('fastDispatchForEssentialItemsAndSmoothLogisticsForLargerEquipmentOrders', 'Fast dispatch for essential items and smooth logistics for larger\r\n              equipment orders.')}
             </p>
           </div>
         </div>
@@ -78,11 +78,10 @@ export default function Home() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-base font-semibold text-primary">
-              Need help selecting the right setup?
+              {t('needHelpSelectingTheRightSetup', 'Need help selecting the right setup?')}
             </p>
             <p className="mt-1 text-sm text-main/80">
-              Speak with our team or send us your requirements and we will guide
-              you to the right pool and spa products.
+              {t('speakWithOurTeamOrSendUsYourRequirementsAndWeWillGuideYouToTheRightPoolAndSpaProducts', 'Speak with our team or send us your requirements and we will guide\r\n              you to the right pool and spa products.')}
             </p>
           </div>
 
@@ -92,14 +91,14 @@ export default function Home() {
               className="inline-flex h-11 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
             >
               <PhoneCall size={16} />
-              Book a Call
+              {t('bookACall', 'Book a Call')}
             </a>
             <a
               href="mailto:info@qualitypoolspa.es"
               className="inline-flex h-11 items-center gap-2 rounded-full border border-line bg-background px-5 text-sm font-semibold text-main transition-colors hover:bg-secondary"
             >
               <Mail size={16} />
-              Email Us
+              {t('emailUs', 'Email Us')}
             </a>
           </div>
         </div>
