@@ -41,3 +41,14 @@ interface SelectWithoutIconProps
     value: string;
   }[];
 }
+
+interface IProduct {
+  id: string;
+  name: string;
+  categoryId: string;
+  image: string;
+  price: number;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

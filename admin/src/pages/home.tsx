@@ -1,24 +1,41 @@
 import { MainLayout } from "../layouts";
 import { Link } from "react-router-dom";
-import { ArrowRight, Boxes } from "lucide-react";
-
-const categoryStats = [
-  { category: "Hot Tubs", totalItems: 18 },
-  { category: "Spas", totalItems: 14 },
-  { category: "Saunas", totalItems: 9 },
-  { category: "Pools", totalItems: 11 },
-  { category: "Pool Covers", totalItems: 7 },
-  { category: "Heat Pumps", totalItems: 10 },
-  { category: "Salt Chlorinators", totalItems: 8 },
-  { category: "Filters", totalItems: 16 },
-  { category: "Water Chemicals", totalItems: 21 },
-] as const;
+import { ArrowRight } from "lucide-react";
+import { useMemo } from "react";
+import { useProduct } from "../hooks";
+import { productCategories } from "../constant/data";
 
 export default function Home() {
-  const totalProducts = categoryStats.reduce(
-    (sum, category) => sum + category.totalItems,
-    0
-  );
+  const { products = [], isLoadingProducts } = useProduct();
+
+  const categoryStats = useMemo(() => {
+    const countByCategorySlug = products.reduce<Record<string, number>>(
+      (acc, product) => {
+        const categorySlug = product.categoryId;
+        acc[categorySlug] = (acc[categorySlug] ?? 0) + 1;
+        return acc;
+      },
+      {}
+    );
+
+    const knownCategoryStats = productCategories.map((category) => ({
+      category: category.name,
+      slug: category.slug,
+      totalItems: countByCategorySlug[category.slug] ?? 0,
+    }));
+
+    const unknownCategoryStats = Object.entries(countByCategorySlug)
+      .filter(([slug]) => !productCategories.some((category) => category.slug === slug))
+      .map(([slug, totalItems]) => ({
+        category: slug,
+        slug,
+        totalItems,
+      }));
+
+    return [...knownCategoryStats, ...unknownCategoryStats];
+  }, [products]);
+
+  const totalProducts = products.length;
 
   return (
     <MainLayout>
@@ -42,7 +59,6 @@ export default function Home() {
               className="btn h-11 w-fit rounded-full bg-primary/10 px-5 text-sm font-semibold text-primary transition-transform hover:-translate-y-0.5"
             >
               Products
-              <Boxes size={16} />
             </Link>
             <Link
               to="/add-product"
@@ -57,30 +73,38 @@ export default function Home() {
         <div className="">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-            
               <p className="font-space text-lg font-semibold text-main">
                 Category
               </p>
             </div>
             <p className="text-sm font-medium text-muted">
-              Total items: <span className="font-semibold text-primary">{totalProducts}</span>
+              Total items:{" "}
+              <span className="font-semibold text-primary">
+                {totalProducts}
+              </span>
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {categoryStats.map((item) => (
-              <div
-                key={item.category}
-                className="rounded-xl border border-line bg-secondary p-4"
-              >
-                <p className="text-sm font-medium text-main">{item.category}</p>
-                <p className="mt-2 text-3xl font-space font-semibold text-primary">
-                  {item.totalItems}
-                </p>
-                <p className="text-xs text-muted">Items in this category</p>
-              </div>
-            ))}
-          </div>
+          {isLoadingProducts ? (
+            <div className="rounded-xl border border-line bg-secondary p-5 text-center">
+              <p className="text-sm font-medium text-main">Loading product stats...</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {categoryStats.map((item) => (
+                <div
+                  key={item.slug}
+                  className="rounded-xl border border-line bg-secondary p-4"
+                >
+                  <p className="text-sm font-medium text-main">{item.category}</p>
+                  <p className="mt-2 text-3xl font-space font-semibold text-primary">
+                    {item.totalItems}
+                  </p>
+                  <p className="text-xs text-muted">Items in this category</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </MainLayout>

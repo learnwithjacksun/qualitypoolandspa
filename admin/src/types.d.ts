@@ -43,3 +43,23 @@ interface SelectWithoutIconProps
         value: string;
     }[];
 }
+
+interface IAdmin {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+interface IProduct {
+    id: string;
+    name: string;
+    categoryId: string;
+    image: string;
+    price: number;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+}

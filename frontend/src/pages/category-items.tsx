@@ -1,19 +1,13 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronRight, Loader2 } from "lucide-react";
 import { MainLayout } from "@/layouts";
 import { useTranslation } from "react-i18next";
-import axios from "axios";
+import useProduct from "@/hooks/useProduct";
+import { formatNumber } from "@/helpers/formatNumber";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-type Product = {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  image: string;
-};
+
 
 const categoryLabelBySlug: Record<string, string> = {
   "hot-tubs": "Hot Tubs",
@@ -29,28 +23,16 @@ const categoryLabelBySlug: Record<string, string> = {
 
 export default function CategoryItems() {
   const { t } = useTranslation();
+  const { products, isLoadingProducts } = useProduct();
   const { categorySlug = "" } = useParams<{ categorySlug: string }>();
   const categoryName = categoryLabelBySlug[categorySlug] ?? "Category";
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const filteredProducts = useMemo(() => {
+    return products?.filter((product) => product.categoryId === categorySlug);
+  }, [products, categorySlug]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `${API_URL}/products?categorySlug=${categorySlug}`
-        );
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchProducts();
-  }, [categorySlug]);
+ 
 
   return (
     <MainLayout>
@@ -81,20 +63,20 @@ export default function CategoryItems() {
           </p>
         </div>
 
-        {loading ? (
+        {isLoadingProducts ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="animate-spin text-primary" size={32} />
           </div>
-        ) : products.length > 0 ? (
+        ) : filteredProducts && filteredProducts?.length > 0 ? (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {products.map((product) => (
+            {filteredProducts?.map((product) => (
               <div
                 key={product.id}
-                className="group relative overflow-hidden flex flex-col rounded-2xl border border-line bg-background shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                className="group relative overflow-hidden flex flex-col rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-secondary">
                   <img
-                    src={product.image.startsWith("/") ? `${API_URL}${product.image}` : product.image}
+                    src={product.image}
                     alt={product.name}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
@@ -105,21 +87,24 @@ export default function CategoryItems() {
                     <h3 className="text-lg font-semibold text-primary">
                       {product.name}
                     </h3>
-                    <p className="text-sm leading-relaxed text-main/75 line-clamp-3">
+                    <p className="text-sm leading-relaxed text-main/75 line-clamp-2 whitespace-pre-wrap">
                       {product.description}
                     </p>
                   </div>
                   <div className="mt-6 flex items-center justify-between">
                     <span className="font-space font-semibold text-primary text-xl">
-                      {parseFloat(product.price) > 0 ? (
-                        <>€{Number(product.price).toLocaleString()}</>
+                      {product.price > 0 ? (
+                        <>{formatNumber(product.price)}</>
                       ) : (
                         <span className="text-sm text-muted">Call for Price</span>
                       )}
                     </span>
-                    <button className="rounded-full bg-primary/10 text-primary px-4 py-2 text-sm font-medium transition-colors hover:bg-primary hover:text-white">
+                    <Link
+                      to={`/categories/${categorySlug}/${product.id}`}
+                      className="rounded-full bg-primary/10 text-primary px-4 py-2 text-sm font-medium transition-colors hover:bg-primary hover:text-white"
+                    >
                       {t("viewDetails", "Details")}
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

@@ -4,9 +4,11 @@ import { useState } from "react";
 import { Menu, LogOut } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import MobileMenu from "./mobile-menu";
+import { useAuth } from "../../hooks";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { logoutAdmin } = useAuth();
 
   return (
     <>
@@ -26,7 +28,7 @@ export default function Header() {
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-8">
-            <ul className="flex items-center gap-6 border-r-[1px] border-white/30 pr-6">
+            <ul className="flex items-center gap-6 border-r border-white/30 pr-6">
               {navLinks.map((link) => (
                 <li key={link.to}>
                   <NavLink
@@ -45,7 +47,7 @@ export default function Header() {
               ))}
             </ul>
 
-            <button className="h-10 px-4 rounded-full bg-red-500 text-white text-sm font-semibold">
+            <button onClick={logoutAdmin} className="h-10 px-4 rounded-full bg-red-500 text-white text-sm font-semibold">
               <LogOut size={16} />
               Logout
             </button>

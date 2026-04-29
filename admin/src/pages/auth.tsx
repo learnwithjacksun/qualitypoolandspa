@@ -3,8 +3,10 @@ import { InputWithIcon, ButtonWithLoader } from "../components/ui";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "../schemas/auth";
+import { useAuth } from "../hooks";
 
 export default function Auth() {
+  const { login, isLoading } = useAuth();
   const {
     register,
     handleSubmit,
@@ -18,11 +20,11 @@ export default function Auth() {
   });
 
   const onSubmit = (data: LoginSchema) => {
-    console.log(data);
+    login(data.email, data.password);
   };
 
   return (
-    <div className="bg-primary min-h-[100dvh]">
+    <div className="bg-primary min-h-dvh">
       <div className="max-w-lg mx-auto w-[90%] space-y-8 pt-20">
         <div className="center">
           <img src="logo.png" alt="" className="h-7 md:h-10 w-auto object-contain" />
@@ -59,7 +61,7 @@ export default function Auth() {
             <ButtonWithLoader
               initialText="Login"
               loadingText="Logging in..."
-              loading={false}
+              loading={isLoading}
               type="submit"
               className="w-full btn-primary h-11 rounded-md"
             />
