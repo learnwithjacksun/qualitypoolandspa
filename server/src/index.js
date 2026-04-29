@@ -15,7 +15,7 @@ const allowedOrigins = [
   "http://localhost:3001",
   "http://localhost:3002",
   "https://qualitypoolandspa.vercel.app",
-  "https://admin-qualitypoolandspa.vercel.app",
+  "https://qualitypoolandspa-admin.vercel.app",
 ];
 app.use(cors({
     origin: allowedOrigins,
