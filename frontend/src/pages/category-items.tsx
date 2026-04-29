@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, FileText, Loader2 } from "lucide-react";
 import { MainLayout } from "@/layouts";
 import { useTranslation } from "react-i18next";
 import useProduct from "@/hooks/useProduct";
@@ -62,6 +62,35 @@ export default function CategoryItems() {
             )}
           </p>
         </div>
+
+        {categorySlug === "hot-tubs" ? (
+          <div className="mb-8 flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4 md:flex-row md:items-center md:justify-between md:p-5">
+            <div className="flex gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                <FileText size={20} aria-hidden />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-primary">
+                  {t("fullProductDetailsPdf", "Full product details")}
+                </p>
+                <p className="mt-1 text-sm text-main/75">
+                  {t(
+                    "viewWellisPdfForSpecifications",
+                    "View our Wellis brochure (PDF) for complete specifications, options, and technical information."
+                  )}
+                </p>
+              </div>
+            </div>
+            <a
+              href="/pdf/wellis.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
+            >
+              {t("openWellisPdf", "Open PDF")}
+            </a>
+          </div>
+        ) : null}
 
         {isLoadingProducts ? (
           <div className="flex justify-center items-center py-20">
