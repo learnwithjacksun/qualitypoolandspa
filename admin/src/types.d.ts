@@ -17,6 +17,8 @@ interface ButtonWithLoaderProps
     loading?: boolean;
     initialText: string;
     loadingText: string;
+    type?: "button" | "submit" | "reset";
+    className?: string; // Explicitly adding just in case
 }
 
 interface SelectWithIconProps

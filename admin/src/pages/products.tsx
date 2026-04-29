@@ -1,9 +1,17 @@
 import { MainLayout } from "../layouts";
-import { productCategories } from "../constant/data";
-import { useState } from "react";
-import { useMemo } from "react";
-import { Search,ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
+
+type Category = {
+  id: number;
+  nameKey: string;
+  nameFallback: string;
+  slug: string;
+  descriptionKey: string;
+  descriptionFallback: string;
+  image: string;
+  segment: string;
+};
 
 type CategoryFilter = "all" | "wellness" | "pool-build" | "maintenance";
 
@@ -14,24 +22,43 @@ const filterButtons: ReadonlyArray<{ key: CategoryFilter; label: string }> = [
   { key: "maintenance", label: "Maintenance" },
 ];
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export default function Products() {
      const [searchValue, setSearchValue] = useState("");
      const [activeFilter, setActiveFilter] = useState<CategoryFilter>("all");
+     const [categories, setCategories] = useState<Category[]>([]);
+     const [loading, setLoading] = useState(true);
+
+     useEffect(() => {
+       const fetchCategories = async () => {
+         try {
+           const response = await axios.get(`${API_URL}/categories`);
+           setCategories(response.data);
+         } catch (error) {
+           console.error("Failed to fetch categories:", error);
+         } finally {
+           setLoading(false);
+         }
+       };
+
+       fetchCategories();
+     }, []);
 
      const filteredCategories = useMemo(() => {
        const normalizedSearch = searchValue.trim().toLowerCase();
 
-       return productCategories.filter((category) => {
+       return categories.filter((category) => {
          const matchesFilter =
            activeFilter === "all" || category.segment === activeFilter;
          const matchesSearch =
            normalizedSearch.length === 0 ||
-           category.name.toLowerCase().includes(normalizedSearch) ||
-           category.description.toLowerCase().includes(normalizedSearch);
+           category.nameFallback.toLowerCase().includes(normalizedSearch) ||
+           (category.descriptionFallback?.toLowerCase().includes(normalizedSearch) ?? false);
 
          return matchesFilter && matchesSearch;
        });
-     }, [activeFilter, searchValue]);
+     }, [activeFilter, searchValue, categories]);
   return (
     <MainLayout>
       <div className="main space-y-8">
@@ -81,7 +108,7 @@ export default function Products() {
           </div>
 
           <p className="text-xs text-muted">
-            Showing {filteredCategories.length} of {productCategories.length}{" "}
+            Showing {filteredCategories.length} of {categories.length}{" "}
             categories
           </p>
         </div>
@@ -96,8 +123,8 @@ export default function Products() {
               >
                 <div className="aspect-[16/10] overflow-hidden rounded-xl">
                   <img
-                    src={category.image}
-                    alt={category.name}
+                    src={category.image.startsWith("/") ? `${API_URL}${category.image}` : category.image}
+                    alt={category.nameFallback}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
@@ -105,12 +132,12 @@ export default function Products() {
 
                 <div className="mt-4 flex items-start justify-between gap-3 px-2 md:px-4 pb-4 relative">
                   <div className="space-y-1.5">
-                    <h3 className="text-base font-semibold text-primary md:text-lg">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm leading-relaxed text-main/75 line-clamp-2 md:line-clamp-none">
-                      {category.description}
-                    </p>
+                     <h3 className="text-base font-semibold text-primary md:text-lg">
+                       {category.nameFallback}
+                     </h3>
+                     <p className="text-sm leading-relaxed text-main/75 line-clamp-2 md:line-clamp-none">
+                       {category.descriptionFallback}
+                     </p>
                   </div>
                 </div>
 

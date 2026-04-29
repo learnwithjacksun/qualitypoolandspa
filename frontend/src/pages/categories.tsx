@@ -1,36 +1,63 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { MainLayout } from "@/layouts";
 import { ChevronRight, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-import { productCategories } from "@/constants/data";
 import { useTranslation } from "react-i18next";
+
+type Category = {
+  id: number;
+  nameKey: string;
+  nameFallback: string;
+  slug: string;
+  descriptionKey: string;
+  descriptionFallback: string;
+  image: string;
+  segment: string;
+};
 
 type CategoryFilter = "all" | "wellness" | "pool-build" | "maintenance";
 
-
-
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function Categories() {
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState("");
   const [activeFilter, setActiveFilter] = useState<CategoryFilter>("all");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const filterButtons: ReadonlyArray<{ key: CategoryFilter; label: string }> = [
     { key: "all", label: t("allCategories", "All Categories") },
     { key: "wellness", label: t("wellness", "Wellness") },
     { key: "pool-build", label: t("poolBuild", "Pool Build") },
     { key: "maintenance", label: t("maintenance", "Maintenance") },
   ];
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/categories`);
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const filteredCategories = useMemo(() => {
     const normalizedSearch = searchValue.trim().toLowerCase();
 
-    return productCategories.filter((category) => {
+    return categories.filter((category) => {
       const matchesFilter =
         activeFilter === "all" || category.segment === activeFilter;
       const categoryName = t(category.nameKey, category.nameFallback).toLowerCase();
       const categoryDescription = t(
-        category.descriptionKey,
-        category.descriptionFallback
+        category.descriptionKey || "",
+        category.descriptionFallback || ""
       ).toLowerCase();
       const matchesSearch =
         normalizedSearch.length === 0 ||
@@ -39,7 +66,7 @@ export default function Categories() {
 
       return matchesFilter && matchesSearch;
     });
-  }, [activeFilter, searchValue, t]);
+  }, [activeFilter, searchValue, t, categories]);
 
   return (
     <MainLayout>
@@ -97,7 +124,7 @@ export default function Categories() {
             })}
           </div>
 
-          <p className="text-xs text-muted">{t('showingLengthOfLength2', 'Showing {{length}} of {{length2}}', { length: filteredCategories.length, length2: productCategories.length })}{" "}
+          <p className="text-xs text-muted">{t('showingLengthOfLength2', 'Showing {{length}} of {{length2}}', { length: filteredCategories.length, length2: categories.length })}{" "}
             categories
           </p>
         </div>
@@ -112,7 +139,7 @@ export default function Categories() {
               >
                 <div className="aspect-[16/10] overflow-hidden rounded-xl">
                   <img
-                    src={category.image}
+                    src={category.image.startsWith("/") ? `${API_URL}${category.image}` : category.image}
                     alt={t(category.nameKey, category.nameFallback)}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
