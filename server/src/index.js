@@ -7,6 +7,8 @@ import productRouter from "./routes/product.route.js";
 
 await connectDB();
 
+const PORT = process.env.PORT || 5000;
+
 const app = express();
 const allowedOrigins = [
     "http://localhost:3000",
@@ -25,13 +27,17 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.get("/", (req, res) => {
-    res.send("Quality Pool & Spa API");
+    res.json({
+        message: "Quality Pool & Spa API",
+        version: "1.0.0",
+        status: "success",
+    });
 });
 
 // routes
 app.use("/auth", authRouter);
 app.use("/products", productRouter);
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port http://localhost:${process.env.PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port http://localhost:${PORT}`);
 });
