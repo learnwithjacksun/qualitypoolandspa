@@ -37,16 +37,16 @@ export default function CategoryItems() {
   return (
     <MainLayout>
       <section className="main py-10 md:py-16">
-        <div className="mb-4 flex items-center gap-2 text-sm text-muted">
-          <Link to="/" className="hover:text-primary">
+        <div className="mb-4 flex items-center gap-2 text-sm text-muted flex-wrap">
+          <Link to="/" className="hover:text-primary text-nowrap">
             {t("home", "Home")}
           </Link>
           <ChevronRight size={14} />
-          <Link to="/categories" className="hover:text-primary">
+          <Link to="/categories" className="hover:text-primary text-nowrap">
             {t("categories", "Categories")}
           </Link>
           <ChevronRight size={14} />
-          <span className="font-medium text-main">{categoryName}</span>
+          <span className="font-medium text-main text-nowrap">{categoryName}</span>
         </div>
 
         <div className="mb-10">

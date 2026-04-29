@@ -49,13 +49,13 @@ export default function Categories() {
   return (
     <MainLayout>
       <div className="main mt-10 space-y-8">
-        <div className="mb-4 flex items-center gap-2 text-sm text-muted">
-          <Link to="/" className="hover:text-primary">
+        <div className="mb-4 flex items-center gap-2 text-sm text-muted flex-wrap">
+          <Link to="/" className="hover:text-primary text-nowrap">
             {t('home', 'Home')}
           </Link>
           <ChevronRight size={14} />
 
-          <span className="font-medium text-main">{t('categories', 'Categories')}</span>
+          <span className="font-medium text-main text-nowrap">{t('categories', 'Categories')}</span>
         </div>
         <div className="space-y-2">
           <h2 className="text-2xl font-space font-semibold text-primary md:text-3xl">
