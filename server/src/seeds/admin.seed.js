@@ -5,8 +5,8 @@ import AdminModel from "../models/admin.model.js";
 import connectDB from "../config/database.js";
 
 const adminData = {
-  email: "admin@qualitypoolspa.se",
-  password: "Admin@123",
+  email: "",
+  password: "",
 };
 
 const adminSeed = async () => {
