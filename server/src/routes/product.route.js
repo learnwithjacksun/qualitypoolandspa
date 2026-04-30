@@ -12,7 +12,7 @@ const productRouter = Router();
 
 // private routes
 productRouter.post("/", verifyToken, createProduct);
-productRouter.put("/:id", verifyToken, updateProduct);
+productRouter.patch("/:id", verifyToken, updateProduct);
 productRouter.delete("/:id", verifyToken, deleteProduct);
 
 // public routes

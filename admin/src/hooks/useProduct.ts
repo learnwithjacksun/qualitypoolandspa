@@ -47,7 +47,7 @@ export default function useProduct() {
 
     }
 
-    const updateProduct = async (id: string, data: ProductSchema, image: File | null) => {
+    const updateProduct = async (id: string, data: ProductSchema, image: File | null, existingImage: string | null) => {
         setIsLoading(true);
         try {
             let imageFile = null
@@ -60,10 +60,10 @@ export default function useProduct() {
                 categoryId: data.category,
                 description: data.description,
                 price: data.price,
-                image: imageFile,
+                image: imageFile ?? existingImage,
             }
 
-            const response = await api.put(`/products/${id}`, payload)
+            const response = await api.patch(`/products/${id}`, payload)
             if (response.data.success) {
                 toast.success(response.data.message)
                 queryClient.invalidateQueries({ queryKey: ["products"] })

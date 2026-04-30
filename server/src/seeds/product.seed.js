@@ -3,23 +3,30 @@ import ProductModel from "../models/product.model.js";
 import connectDB from "../config/database.js";
 import process from "process"
 
-// 📦 Seed Data
 const products = [
   {
-    name: "Essential Edition Spa",
+    name: "Kilimanjaro Life Essential Edition",
     categoryId: "hot-tubs",
-    image: "/images/essential-edition-spa.png",
-    imagePublicId: "essential-edition-spa",
-    price: 0, // update later
-    description: `Total number of jets: 68
-
+    image:
+      "https://res.cloudinary.com/dfbj3cyw5/image/upload/v1777529917/qualitypoolspa-images/bdy3ojaidukb8cyp2omj.jpg",
+    imagePublicId: crypto.RandomUUID(),
+    price: 15000,
+    description: `Total number of jets: 59
 Pumps: 3 × 3 HP
-
 Heater: 3 kW
-
-Insulation: Life Scandinavian insulation
-
-Power requirements: 32A (230V / 50Hz), optional 50A or 400V`,
+Insulation: Life Scandinavian insulation`,
+  },
+  {
+    name: "Kilimanjaro Life Essential Edition",
+    categoryId: "hot-tubs",
+    image:
+      "https://res.cloudinary.com/dfbj3cyw5/image/upload/v1777529917/qualitypoolspa-images/bdy3ojaidukb8cyp2omj.jpg",
+    imagePublicId: crypto.RandomUUID(),
+    price: 15000,
+    description: `Total number of jets: 59
+Pumps: 3 × 3 HP
+Heater: 3 kW
+Insulation: Life Scandinavian insulation`,
   },
 ];
 

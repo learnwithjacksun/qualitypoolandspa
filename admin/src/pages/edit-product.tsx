@@ -58,7 +58,7 @@ export default function EditProduct() {
 
   const onSubmit = async (data: ProductSchema) => {
     if (!id) return;
-    const success = await updateProduct(id, data, image);
+    const success = await updateProduct(id, data, image, product?.image ?? null);
     if (success) {
       navigate(`/products/${id}`);
     }
