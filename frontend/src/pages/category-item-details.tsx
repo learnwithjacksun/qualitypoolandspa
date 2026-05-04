@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ChevronRight, Loader2, PhoneCall, Mail, FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import useProduct from "@/hooks/useProduct";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { productCategories } from "@/constants/data";
 import { formatNumber } from "@/helpers/formatNumber";
 
@@ -37,6 +37,11 @@ export default function CategoryItemDetails() {
     if (product.image) return [product.image];
     return [];
   }, [product]);
+  const [selectedImage, setSelectedImage] = useState<string>("");
+
+  useEffect(() => {
+    setSelectedImage(productImages[0] ?? "");
+  }, [productImages]);
 
   const enquiryMailTo = useMemo(() => {
     if (!product) {
@@ -115,9 +120,9 @@ export default function CategoryItemDetails() {
           <article className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-4">
               <div className="overflow-hidden rounded-2xl aspect-square border border-line bg-background">
-                {productImages.length > 0 ? (
+                {selectedImage ? (
                   <img
-                    src={productImages[0]}
+                    src={selectedImage}
                     alt={product.name}
                     className="h-full w-full object-cover"
                     loading="lazy"
@@ -131,10 +136,17 @@ export default function CategoryItemDetails() {
 
               {productImages.length > 1 && (
                 <div className="mt-4 grid grid-cols-3 gap-3">
-                  {productImages.slice(1).map((imageUrl) => (
-                    <div
+                  {productImages.map((imageUrl) => (
+                    <button
+                      type="button"
                       key={imageUrl}
-                      className="aspect-square overflow-hidden rounded-lg border border-line"
+                      onClick={() => setSelectedImage(imageUrl)}
+                      className={`aspect-square overflow-hidden rounded-lg border transition-colors ${
+                        selectedImage === imageUrl
+                          ? "border-primary"
+                          : "border-line hover:border-primary/60"
+                      }`}
+                      aria-label={`View image for ${product.name}`}
                     >
                       <img
                         src={imageUrl}
@@ -142,7 +154,7 @@ export default function CategoryItemDetails() {
                         className="h-full w-full object-cover"
                         loading="lazy"
                       />
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
