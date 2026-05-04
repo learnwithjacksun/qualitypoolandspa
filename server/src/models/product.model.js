@@ -12,11 +12,31 @@ const productSchema = new Schema(
     },
     image: {
       type: String,
-      required: true,
+      required: false,
+    },
+    images: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (value) {
+          return Array.isArray(value) && value.every((item) => typeof item === "string" && item.trim() !== "");
         },
+        message: "Images must be a list of non-empty strings",
+      },
+    },
     imagePublicId: {
       type: String,
-      required: true,
+      required: false,
+    },
+    imagesPublicId: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (value) {
+          return Array.isArray(value) && value.every((item) => typeof item === "string" && item.trim() !== "");
+        },
+        message: "Image public ids must be a list of non-empty strings",
+      },
     },
     price: {
       type: Number,

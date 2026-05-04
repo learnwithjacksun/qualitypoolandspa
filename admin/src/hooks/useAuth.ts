@@ -57,7 +57,7 @@ export default function useAuth() {
         } catch (error: unknown) {
             console.error(error);
             navigate("/");
-            toast.error((error as AxiosError<{ message: string }>).response?.data.message);
+            // toast.error((error as AxiosError<{ message: string }>).response?.data.message);
             return false;
         } finally {
             setIsCheckingAuth(false);

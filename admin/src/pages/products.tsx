@@ -123,6 +123,9 @@ export default function Products() {
         ) : filteredProducts.length > 0 ? (
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {filteredProducts.map((product) => (
+              (() => {
+                const imageUrl = product.images?.[0] ?? product.image ?? "";
+                return (
               <article
                 key={product.id}
                 role="button"
@@ -137,12 +140,18 @@ export default function Products() {
                 className="group relative cursor-pointer overflow-hidden rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1 flex flex-col"
               >
                 <div className="aspect-16/10 overflow-hidden rounded-xl">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-sm text-muted bg-background">
+                      No image available
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-4 flex items-start justify-between gap-3 px-2 md:px-4 pb-4 relative">
@@ -177,6 +186,8 @@ export default function Products() {
                   </p>
                 </div>
               </article>
+                );
+              })()
             ))}
           </div>
         ) : (

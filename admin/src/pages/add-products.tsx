@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MainLayout } from "../layouts";
 import { ButtonWithLoader, InputWithoutIcon, SelectWithoutIcon } from "../components/ui";
 import { Image as ImageIcon, Trash2 } from "lucide-react";
@@ -9,18 +9,22 @@ import { useProduct } from "../hooks";
 import { productCategories } from "../constant/data";
 
 export default function AddProduct() {
-
   const { createProduct, isLoading } = useProduct();
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
+    const selectedFiles = Array.from(e.target.files ?? []);
+    if (selectedFiles.length === 0) return;
+    setImages(selectedFiles);
+    setImagePreviews(selectedFiles.map((file) => URL.createObjectURL(file)));
   };
+
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+    };
+  }, [imagePreviews]);
 
   const {
     register,
@@ -34,12 +38,12 @@ export default function AddProduct() {
  
 
   const onSubmit = async (data: ProductSchema) => {
-    console.log(data);
-    const success = await createProduct(data, image);
+    const success = await createProduct(data, images);
     if (success) {
       reset();
-      setImage(null);
-      setImagePreview(null);
+      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+      setImages([]);
+      setImagePreviews([]);
     }
   };
 
@@ -67,30 +71,41 @@ export default function AddProduct() {
                 id="image"
                 className="hidden"
                 accept="image/*"
+                multiple
                 onChange={handleImageChange}
               />
-              {!image && !imagePreview ? (
+              {images.length === 0 && imagePreviews.length === 0 ? (
                 <div className="flex items-center justify-center flex-col gap-2 min-h-[200px] border-dashed border-2 border-line rounded-lg p-4">
                   <ImageIcon size={18} className="text-muted" />
-                  <p className="text-sm text-main">Upload Product Image</p>
+                  <p className="text-sm text-main">Upload Product Images</p>
                   <p className="text-xs text-main/75">Max file size: 5MB</p>
                 </div>
               ) : (
-                <div className="h-[400px] max-h-[400px] w-full rounded-lg overflow-hidden relative">
-                  <img
-                    src={imagePreview || ""}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    {imagePreviews.map((preview) => (
+                      <div
+                        key={preview}
+                        className="h-40 w-full rounded-lg overflow-hidden relative"
+                      >
+                        <img
+                          src={preview}
+                          alt="Selected product"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
                   <button
                     onClick={() => {
-                      setImage(null);
-                      setImagePreview(null);
+                      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+                      setImages([]);
+                      setImagePreviews([]);
                     }}
                     type="button"
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white rounded-full p-2"
+                    className="bg-black/80 text-white rounded-full p-2"
                   >
-                    <Trash2 size={18} className="text-red-500" /> Remove Image
+                    <Trash2 size={18} className="text-red-500" /> Remove Images
                   </button>
                 </div>
               )}

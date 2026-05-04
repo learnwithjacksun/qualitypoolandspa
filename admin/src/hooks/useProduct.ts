@@ -13,20 +13,20 @@ export default function useProduct() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const createProduct = async (data: ProductSchema, image: File | null) => {
+    const createProduct = async (data: ProductSchema, images: File[]) => {
         setIsLoading(true);
         try {
-            if (!image) {
-                toast.error("Please upload a product image")
+            if (images.length === 0) {
+                toast.error("Please upload at least one product image")
                 return false
             }
-            const base64Image = await toBase64(image);
+            const base64Images = await Promise.all(images.map((file) => toBase64(file)));
             const payload = {
                 name: data.name,
                 categoryId: data.category,
                 description: data.description,
                 price: data.price,
-                image: base64Image,
+                images: base64Images,
             }
 
             const response = await api.post("/products", payload)
@@ -47,20 +47,18 @@ export default function useProduct() {
 
     }
 
-    const updateProduct = async (id: string, data: ProductSchema, image: File | null, existingImage: string | null) => {
+    const updateProduct = async (id: string, data: ProductSchema, images: File[]) => {
         setIsLoading(true);
         try {
-            let imageFile = null
-
-            if (image) {
-                imageFile = await toBase64(image);
-            }
             const payload = {
                 name: data.name,
                 categoryId: data.category,
                 description: data.description,
                 price: data.price,
-                image: imageFile ?? existingImage,
+            }
+            if (images.length > 0) {
+                const base64Images = await Promise.all(images.map((file) => toBase64(file)));
+                Object.assign(payload, { images: base64Images });
             }
 
             const response = await api.patch(`/products/${id}`, payload)

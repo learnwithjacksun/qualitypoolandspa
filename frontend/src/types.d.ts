@@ -46,7 +46,8 @@ interface IProduct {
   id: string;
   name: string;
   categoryId: string;
-  image: string;
+  image?: string;
+  images?: string[];
   price: number;
   description: string;
   createdAt: Date;

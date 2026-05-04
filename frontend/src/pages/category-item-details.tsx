@@ -26,10 +26,17 @@ export default function CategoryItemDetails() {
   const product = useMemo(() => {
     return (
       products?.find(
-        (item) => item.id === productId && item.categoryId === categorySlug
+        (item) => item.id === productId && item.categoryId === categorySlug,
       ) ?? null
     );
   }, [categorySlug, productId, products]);
+
+  const productImages = useMemo(() => {
+    if (!product) return [];
+    if (Array.isArray(product.images) && product.images.length > 0) return product.images;
+    if (product.image) return [product.image];
+    return [];
+  }, [product]);
 
   const enquiryMailTo = useMemo(() => {
     if (!product) {
@@ -37,7 +44,9 @@ export default function CategoryItemDetails() {
     }
 
     const productPrice =
-      product.price > 0 ? formatNumber(product.price) : t("callForPrice", "Call for Price");
+      product.price > 0
+        ? formatNumber(product.price)
+        : t("callForPrice", "Call for Price");
 
     const subject = `Product enquiry: ${product.name}`;
     const body = [
@@ -68,11 +77,16 @@ export default function CategoryItemDetails() {
             {t("categories", "Categories")}
           </Link>
           <ChevronRight size={14} />
-          <Link to={`/categories/${categorySlug}`} className="hover:text-primary text-nowrap">
+          <Link
+            to={`/categories/${categorySlug}`}
+            className="hover:text-primary text-nowrap"
+          >
             {categoryName}
           </Link>
           <ChevronRight size={14} />
-          <span className="font-medium text-main text-nowrap">{product?.name}</span>
+          <span className="font-medium text-main text-nowrap">
+            {product?.name}
+          </span>
         </div>
 
         {isLoadingProducts ? (
@@ -87,7 +101,7 @@ export default function CategoryItemDetails() {
             <p className="mt-2 text-sm text-muted">
               {t(
                 "theProductMayHaveBeenRemovedOrTheLinkIsInvalid",
-                "The product may have been removed or the link is invalid."
+                "The product may have been removed or the link is invalid.",
               )}
             </p>
             <Link
@@ -99,13 +113,39 @@ export default function CategoryItemDetails() {
           </div>
         ) : (
           <article className="grid gap-6 lg:grid-cols-2">
-            <div className="overflow-hidden rounded-2xl border border-line bg-background">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
+            <div className="space-y-4">
+              <div className="overflow-hidden rounded-2xl aspect-square border border-line bg-background">
+                {productImages.length > 0 ? (
+                  <img
+                    src={productImages[0]}
+                    alt={product.name}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="h-full min-h-80 w-full flex items-center justify-center text-sm text-muted bg-background">
+                    No image available
+                  </div>
+                )}
+              </div>
+
+              {productImages.length > 1 && (
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {productImages.slice(1).map((imageUrl) => (
+                    <div
+                      key={imageUrl}
+                      className="aspect-square overflow-hidden rounded-lg border border-line"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`${product.name} preview`}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="rounded-2xl border border-line bg-background p-5 md:p-6">
               <p className="text-xs font-medium uppercase tracking-wide text-muted">
@@ -115,8 +155,15 @@ export default function CategoryItemDetails() {
                 {product.name}
               </h1>
               <p className="mt-4 text-sm leading-relaxed text-main/80 whitespace-pre-wrap">
-                {product.description || t("noDescriptionAvailable", "No description available.")}
+                {product.description ||
+                  t("noDescriptionAvailable", "No description available.")}
               </p>
+
+                  {categorySlug === "hot-tubs" && (
+                    <div className="border-y border-line mt-6 py-6 overflow-hidden">
+                      <img src="/hottubs.jpg" alt=""  />
+                    </div>
+              )}
 
               <div className="mt-6 rounded-xl border border-line bg-secondary px-4 py-3">
                 <p className="text-xs uppercase tracking-wide text-muted">
@@ -128,35 +175,34 @@ export default function CategoryItemDetails() {
                     : t("callForPrice", "Call for Price")}
                 </p>
               </div>
-
-               {categorySlug === "hot-tubs" ? (
-          <div className="mb-8 flex flex-col gap-3 mt-6 rounded-2xl border border-primary/25 bg-primary/5 p-4 md:flex-row md:items-center md:justify-between md:p-5">
-            <div className="flex gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <FileText size={20} aria-hidden />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-primary">
-                  {t("fullProductDetailsPdf", "Full product details")}
-                </p>
-                <p className="mt-1 text-sm text-main/75">
-                  {t(
-                    "viewWellisPdfForSpecifications",
-                    "View our Wellis brochure (PDF) for complete specifications, options, and technical information."
-                  )}
-                </p>
-              </div>
-            </div>
-            <a
-              href="/pdf/wellis.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
-            >
-              {t("openWellisPdf", "Open PDF")}
-            </a>
-          </div>
-        ) : null}
+              {categorySlug === "hot-tubs" ? (
+                <div className="mb-8 flex flex-col gap-3 mt-6 rounded-2xl border border-primary/25 bg-primary/5 p-4 md:flex-row md:items-center md:justify-between md:p-5">
+                  <div className="flex gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                      <FileText size={20} aria-hidden />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-primary">
+                        {t("fullProductDetailsPdf", "Full product details")}
+                      </p>
+                      <p className="mt-1 text-sm text-main/75">
+                        {t(
+                          "viewWellisPdfForSpecifications",
+                          "View our Wellis brochure (PDF) for complete specifications, options, and technical information.",
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href="/pdf/wellis.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
+                  >
+                    {t("openWellisPdf", "Open PDF")}
+                  </a>
+                </div>
+              ) : null}
 
               <div className="mt-6 rounded-2xl border border-primary/15 bg-primary/5 p-4 md:p-5">
                 <h3 className="text-base font-semibold text-primary">
@@ -165,7 +211,7 @@ export default function CategoryItemDetails() {
                 <p className="mt-1 text-sm text-main/75">
                   {t(
                     "contactUsForAvailabilityAndDelivery",
-                    "Contact us for availability, delivery details, and checkout support."
+                    "Contact us for availability, delivery details, and checkout support.",
                   )}
                 </p>
 

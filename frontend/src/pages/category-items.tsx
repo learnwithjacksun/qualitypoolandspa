@@ -128,17 +128,26 @@ export default function CategoryItems() {
         ) : filteredProducts && filteredProducts?.length > 0 ? (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredProducts?.map((product) => (
+              (() => {
+                const imageUrl = product.images?.[0] ?? product.image ?? "";
+                return (
               <div
                 key={product.id}
                 className="group relative overflow-hidden flex flex-col rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-secondary">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-sm text-muted bg-background">
+                      No image available
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-1 flex-col justify-between p-5">
                   <div className="space-y-2">
@@ -166,6 +175,8 @@ export default function CategoryItems() {
                   </div>
                 </div>
               </div>
+                );
+              })()
             ))}
           </div>
         ) : (

@@ -13,8 +13,8 @@ export default function EditProduct() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { products = [], isLoadingProducts, updateProduct, isLoading } = useProduct();
-  const [image, setImage] = useState<File | null>(null);
-  const [selectedImagePreview, setSelectedImagePreview] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [selectedImagePreviews, setSelectedImagePreviews] = useState<string[]>([]);
 
   const product = useMemo(() => {
     return products.find((item) => item.id === id) ?? null;
@@ -42,29 +42,33 @@ export default function EditProduct() {
 
   useEffect(() => {
     return () => {
-      if (selectedImagePreview) {
-        URL.revokeObjectURL(selectedImagePreview);
-      }
+      selectedImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
     };
-  }, [selectedImagePreview]);
+  }, [selectedImagePreviews]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setImage(file);
-    setSelectedImagePreview(URL.createObjectURL(file));
+    const selectedFiles = Array.from(event.target.files ?? []);
+    if (selectedFiles.length === 0) return;
+    selectedImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+    setImages(selectedFiles);
+    setSelectedImagePreviews(selectedFiles.map((file) => URL.createObjectURL(file)));
   };
 
   const onSubmit = async (data: ProductSchema) => {
     if (!id) return;
-    const success = await updateProduct(id, data, image, product?.image ?? null);
+    const success = await updateProduct(id, data, images);
     if (success) {
       navigate(`/products/${id}`);
     }
   };
 
-  const imagePreview = selectedImagePreview ?? product?.image ?? null;
+  const productImages = (product as IProduct & { images?: string[] } | null)?.images;
+  const existingProductImages = productImages && productImages.length > 0
+    ? productImages
+    : product?.image
+      ? [product.image]
+      : [];
+  const imagePreviews = selectedImagePreviews.length > 0 ? selectedImagePreviews : existingProductImages;
 
   return (
     <MainLayout>
@@ -110,32 +114,43 @@ export default function EditProduct() {
                   id="image"
                   className="hidden"
                   accept="image/*"
+                  multiple
                   onChange={handleImageChange}
                 />
 
-                {!imagePreview ? (
+                {imagePreviews.length === 0 ? (
                   <div className="flex items-center justify-center flex-col gap-2 min-h-[200px] border-dashed border-2 border-line rounded-lg p-4">
                     <ImageIcon size={18} className="text-muted" />
-                    <p className="text-sm text-main">Upload Product Image</p>
+                    <p className="text-sm text-main">Upload Product Images</p>
                     <p className="text-xs text-main/75">Max file size: 5MB</p>
                   </div>
                 ) : (
-                  <div className="h-[400px] max-h-[400px] w-full rounded-lg overflow-hidden relative">
-                    <img
-                      src={imagePreview}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      {imagePreviews.map((preview) => (
+                        <div
+                          key={preview}
+                          className="h-40 w-full rounded-lg overflow-hidden relative"
+                        >
+                          <img
+                            src={preview}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
                     <button
                       onClick={(event) => {
                         event.preventDefault();
-                        setImage(null);
-                        setSelectedImagePreview(null);
+                        selectedImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+                        setImages([]);
+                        setSelectedImagePreviews([]);
                       }}
                       type="button"
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white rounded-full p-2"
+                      className="bg-black/80 text-white rounded-full p-2"
                     >
-                      <Trash2 size={18} className="text-red-500" /> Reset Image
+                      <Trash2 size={18} className="text-red-500" /> Reset Selected Images
                     </button>
                   </div>
                 )}

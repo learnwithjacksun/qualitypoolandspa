@@ -21,10 +21,21 @@ export default function ProductDetails() {
     return products.find((item) => item.id === id) ?? null;
   }, [id, products]);
 
+  const productImages = useMemo(() => {
+    if (!product) return [];
+    const productImageList = (product as IProduct & { images?: string[] }).images;
+    if (Array.isArray(productImageList) && productImageList.length > 0) return productImageList;
+    if (product.image) return [product.image];
+    return [];
+  }, [product]);
+
   return (
     <MainLayout>
       <div className="main space-y-6">
-        <Link to="/products" className="text-sm text-main/75 hover:text-primary transition-colors flex items-center gap-2 w-fit">
+        <Link
+          to="/products"
+          className="text-sm text-main/75 hover:text-primary transition-colors flex items-center gap-2 w-fit"
+        >
           <ArrowLeft size={16} /> Back to products
         </Link>
         <div className="space-y-2 mb-8">
@@ -54,12 +65,36 @@ export default function ProductDetails() {
         ) : (
           <article className="">
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="aspect-square overflow-hidden rounded-xl border border-line">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-full w-full object-cover"
-                />
+              <div className="space-y-4">
+                <div className="aspect-square overflow-hidden rounded-xl border border-line">
+                  {productImages.length > 0 ? (
+                    <img
+                      src={productImages[0]}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-sm text-muted bg-background">
+                      No image available
+                    </div>
+                  )}
+                </div>
+                {productImages.length > 1 && (
+                  <div className="grid grid-cols-3 gap-3">
+                    {productImages.slice(1).map((imageUrl) => (
+                      <div
+                        key={imageUrl}
+                        className="aspect-square overflow-hidden rounded-lg border border-line"
+                      >
+                        <img
+                          src={imageUrl}
+                          alt={`${product.name} preview`}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-4">
@@ -82,13 +117,16 @@ export default function ProductDetails() {
                       ? formatNumber(product.price)
                       : "-"}
                   </p>
-                    </div>
-                    
-                    <div>
-                      <Link to={`/products/${product.id}/edit`} className="rounded-lg border border-line bg-background px-4 py-2 text-sm font-medium text-main transition-colors hover:bg-secondary flex items-center gap-2 w-fit">
-                        <Pencil size={16} /> Edit Product
-                      </Link>
-                    </div>
+                </div>
+
+                <div>
+                  <Link
+                    to={`/products/${product.id}/edit`}
+                    className="rounded-lg border border-line bg-background px-4 py-2 text-sm font-medium text-main transition-colors hover:bg-secondary flex items-center gap-2 w-fit"
+                  >
+                    <Pencil size={16} /> Edit Product
+                  </Link>
+                </div>
               </div>
             </div>
           </article>

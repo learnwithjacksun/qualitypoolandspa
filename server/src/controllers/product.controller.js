@@ -1,16 +1,43 @@
 import { deleteImage, uploadImage } from "../config/cloudinary.js";
 import ProductModel from "../models/product.model.js";
 
+const normalizeImagePayload = (images, image) => {
+  if (Array.isArray(images)) {
+    return images.filter((item) => typeof item === "string" && item.trim() !== "");
+  }
+
+  if (typeof images === "string" && images.trim() !== "") {
+    return [images];
+  }
+
+  if (typeof image === "string" && image.trim() !== "") {
+    return [image];
+  }
+
+  return [];
+};
+
 export const createProduct = async (req, res) => {
-  const { name, categoryId, price, image, description } = req.body;
+  const { name, categoryId, price, image, images, description } = req.body;
 
   try {
-    const { imageUrl, publicIdImage: imagePublicId } = await uploadImage(image);
+    const imageInputs = normalizeImagePayload(images, image);
+    if (imageInputs.length === 0) {
+      return res.status(400).json({
+        message: "At least one image is required",
+        success: false,
+      });
+    }
+
+    const uploadedImages = await Promise.all(imageInputs.map((item) => uploadImage(item)));
+    const imageUrls = uploadedImages.map((item) => item.imageUrl);
+    const imagePublicIds = uploadedImages.map((item) => item.publicIdImage);
+
     const product = await ProductModel.create({
       name,
       categoryId,
-      image: imageUrl,
-      imagePublicId,
+      images: imageUrls,
+      imagesPublicId: imagePublicIds,
       price,
       description,
     });
@@ -67,24 +94,47 @@ export const getProductByCategory = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, categoryId, price, image } = req.body;
-      let imageUpdatedUrl = null;
-    let imagePublicId = null;
-    if (image) {
-      const { imageUrl, publicIdImage } = await uploadImage(image);
-      imageUpdatedUrl = imageUrl;
-      imagePublicId = publicIdImage;
+    const { name, categoryId, price, image, images, description } = req.body;
+
+    const existingProduct = await ProductModel.findById(id);
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found", success: false });
     }
-    const product = await ProductModel.findByIdAndUpdate(
+
+    const updatePayload = {};
+    if (typeof name !== "undefined") updatePayload.name = name;
+    if (typeof categoryId !== "undefined") updatePayload.categoryId = categoryId;
+    if (typeof price !== "undefined") updatePayload.price = price;
+    if (typeof description !== "undefined") updatePayload.description = description;
+
+    const imageInputs = normalizeImagePayload(images, image);
+    if (imageInputs.length > 0) {
+      const publicIdsToDelete = Array.isArray(existingProduct.imagesPublicId) && existingProduct.imagesPublicId.length > 0
+        ? existingProduct.imagesPublicId
+        : existingProduct.imagePublicId
+          ? [existingProduct.imagePublicId]
+          : [];
+
+      if (publicIdsToDelete.length > 0) {
+        await Promise.all(publicIdsToDelete.map((publicId) => deleteImage(publicId)));
+      }
+
+      const uploadedImages = await Promise.all(imageInputs.map((item) => uploadImage(item)));
+      updatePayload.images = uploadedImages.map((item) => item.imageUrl);
+      updatePayload.imagesPublicId = uploadedImages.map((item) => item.publicIdImage);
+    }
+
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
       id,
-      { name, categoryId, price, image: imageUpdatedUrl, imagePublicId }
+      updatePayload,
+      { returnDocument: "after", runValidators: true },
     );
     return res
       .status(200)
       .json({
         message: "Product updated successfully",
         success: true,
-        product,
+        product: updatedProduct,
       });
   } catch (error) {
     console.error("Error updating product:", error);
@@ -101,9 +151,16 @@ export const deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found", success: false });
     }
-    if (product.image) {
-      await deleteImage(product.imagePublicId);
+    const publicIdsToDelete = Array.isArray(product.imagesPublicId) && product.imagesPublicId.length > 0
+      ? product.imagesPublicId
+      : product.imagePublicId
+        ? [product.imagePublicId]
+        : [];
+
+    if (publicIdsToDelete.length > 0) {
+      await Promise.all(publicIdsToDelete.map((publicId) => deleteImage(publicId)));
     }
+
     await ProductModel.findByIdAndDelete(id);
     return res
       .status(200)
