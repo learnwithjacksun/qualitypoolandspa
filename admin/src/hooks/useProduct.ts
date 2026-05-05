@@ -25,12 +25,14 @@ export default function useProduct() {
                 return false
             }
             const base64Images = await Promise.all(images.map((file) => toBase64(file)));
+            const trimmedTag = data.tag?.trim();
             const payload: Record<string, unknown> = {
                 name: data.name,
                 categoryId: data.category,
                 description: data.description,
                 price: data.price,
                 images: base64Images,
+                ...(trimmedTag ? { tag: trimmedTag } : {}),
             }
             if (colorSampleImageFile) {
                 payload.colorSampleImage = await toBase64(colorSampleImageFile);
@@ -67,6 +69,7 @@ export default function useProduct() {
                 categoryId: data.category,
                 description: data.description,
                 price: data.price,
+                tag: data.tag?.trim() ?? "",
             }
             if (images.length > 0) {
                 const base64Images = await Promise.all(images.map((file) => toBase64(file)));

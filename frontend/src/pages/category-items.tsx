@@ -144,7 +144,7 @@ export default function CategoryItems() {
                     tabIndex={0}
                     className="group cursor-pointer relative overflow-hidden flex flex-col rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1"
                   >
-                    <div className="aspect-[4/3] overflow-hidden bg-secondary">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                       {imageUrl ? (
                         <img
                           src={imageUrl}
@@ -157,6 +157,11 @@ export default function CategoryItems() {
                           No image available
                         </div>
                       )}
+                      {product.tag?.trim() ? (
+                        <span className="pointer-events-none absolute left-3 top-3 max-w-[calc(100%-1.5rem)] truncate rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-background shadow-sm">
+                          {product.tag.trim()}
+                        </span>
+                      ) : null}
                     </div>
                     <div className="flex flex-1 flex-col justify-between p-5">
                       <div className="space-y-2">

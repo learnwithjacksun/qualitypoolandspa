@@ -39,6 +39,7 @@ export default function EditProduct() {
       category: product.categoryId,
       description: product.description ?? "",
       price: String(product.price ?? ""),
+      tag: product.tag ?? "",
     });
   }, [product, reset]);
 
@@ -241,6 +242,13 @@ export default function EditProduct() {
                 }))}
                 {...register("category")}
                 error={errors.category?.message}
+                  />
+              <InputWithoutIcon
+                label="Tag (Optional)"
+                type="text"
+                placeholder="Enter tag..."
+                {...register("tag")}
+                error={errors.tag?.message}
               />
 
               <InputWithoutIcon

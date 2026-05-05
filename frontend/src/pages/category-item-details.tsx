@@ -160,9 +160,16 @@ export default function CategoryItemDetails() {
               )}
             </div>
             <div className="rounded-2xl border border-line bg-background p-5 md:p-6">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                {categoryName}
-              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted">
+                  {categoryName}
+                </p>
+                {product.tag?.trim() ? (
+                  <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                    {product.tag.trim()}
+                  </span>
+                ) : null}
+              </div>
               <h1 className="mt-2 text-2xl font-space font-semibold text-primary md:text-3xl">
                 {product.name}
               </h1>

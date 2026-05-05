@@ -5,6 +5,7 @@ export const productSchema = z.object({
     category: z.string().min(1, "Please select a category"),
     description: z.string().optional(),
     price: z.string().optional(),
+    tag: z.string().optional(),
 })
 
 export type ProductSchema = z.infer<typeof productSchema>;

@@ -197,6 +197,14 @@ export default function AddProduct() {
               />
 
             <InputWithoutIcon
+              label="Tag (Optional)"
+              type="text"
+              placeholder="Enter tag..."
+              {...register("tag")}
+              error={errors.tag?.message}
+            />
+
+            <InputWithoutIcon
               label="Price in Euro (Optional)"
               type="number"
               step="0.01"

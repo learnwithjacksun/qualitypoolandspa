@@ -98,9 +98,16 @@ export default function ProductDetails() {
               </div>
 
               <div className="space-y-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted">
-                  {categoryNameBySlug[product.categoryId] ?? product.categoryId}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted">
+                    {categoryNameBySlug[product.categoryId] ?? product.categoryId}
+                  </p>
+                  {product.tag?.trim() ? (
+                    <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                      {product.tag.trim()}
+                    </span>
+                  ) : null}
+                </div>
                 <h3 className="text-2xl font-space font-semibold text-primary">
                   {product.name}
                 </h3>

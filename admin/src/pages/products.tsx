@@ -32,11 +32,14 @@ export default function Products() {
       const matchesFilter =
         activeFilter === "all" || productCategorySlug === activeFilter;
 
+      const tagLower = (product.tag ?? "").toLowerCase();
+
       const matchesSearch =
         normalizedSearch.length === 0 ||
         product.name.toLowerCase().includes(normalizedSearch) ||
         productCategoryName.includes(normalizedSearch) ||
-        product.description.toLowerCase().includes(normalizedSearch);
+        product.description.toLowerCase().includes(normalizedSearch) ||
+        tagLower.includes(normalizedSearch);
 
       return matchesFilter && matchesSearch;
     });
@@ -139,7 +142,7 @@ export default function Products() {
                 }}
                 className="group relative cursor-pointer overflow-hidden rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1 flex flex-col"
               >
-                <div className="aspect-16/10 overflow-hidden rounded-xl">
+                <div className="relative aspect-16/10 overflow-hidden rounded-xl">
                   {imageUrl ? (
                     <img
                       src={imageUrl}
@@ -152,6 +155,11 @@ export default function Products() {
                       No image available
                     </div>
                   )}
+                  {product.tag?.trim() ? (
+                    <span className="pointer-events-none absolute left-3 top-3 max-w-[calc(100%-1.5rem)] truncate rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-background shadow-sm">
+                      {product.tag.trim()}
+                    </span>
+                  ) : null}
                 </div>
 
                 <div className="mt-4 flex items-start justify-between gap-3 px-2 md:px-4 pb-4 relative">

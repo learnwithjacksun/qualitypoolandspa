@@ -21,7 +21,7 @@ const hasColorSamplePayload = (value) =>
   typeof value === "string" && value.trim() !== "";
 
 export const createProduct = async (req, res) => {
-  const { name, categoryId, price, image, images, description, colorSampleImage } = req.body;
+  const { name, categoryId, price, image, images, description, colorSampleImage, tag } = req.body;
 
   try {
     const imageInputs = normalizeImagePayload(images, image);
@@ -55,6 +55,7 @@ export const createProduct = async (req, res) => {
         colorSampleImage: colorSampleUrl,
         colorSamplePublicId: colorSamplePublicId,
       }),
+      ...(typeof tag === "string" && tag.trim() !== "" ? { tag: tag.trim() } : {}),
     });
     return res.status(201).json({
       message: "Product created successfully",
@@ -109,7 +110,7 @@ export const getProductByCategory = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, categoryId, price, image, images, description, colorSampleImage } = req.body;
+    const { name, categoryId, price, image, images, description, colorSampleImage, tag } = req.body;
 
     const existingProduct = await ProductModel.findById(id);
     if (!existingProduct) {
@@ -121,6 +122,9 @@ export const updateProduct = async (req, res) => {
     if (typeof categoryId !== "undefined") updatePayload.categoryId = categoryId;
     if (typeof price !== "undefined") updatePayload.price = price;
     if (typeof description !== "undefined") updatePayload.description = description;
+    if (typeof tag !== "undefined") {
+      updatePayload.tag = typeof tag === "string" ? tag.trim() : tag;
+    }
 
     const imageInputs = normalizeImagePayload(images, image);
     if (imageInputs.length > 0) {

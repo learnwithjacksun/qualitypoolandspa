@@ -62,6 +62,7 @@ interface IProduct {
     colorSampleImage?: string;
     price: number;
     description: string;
+    tag?: string;
     createdAt: Date;
     updatedAt: Date;
 }
