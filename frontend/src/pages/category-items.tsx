@@ -1,13 +1,10 @@
 import { useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ChevronRight, FileText, Loader2 } from "lucide-react";
 import { MainLayout } from "@/layouts";
 import { useTranslation } from "react-i18next";
 import useProduct from "@/hooks/useProduct";
 import { formatNumber } from "@/helpers/formatNumber";
-
-
-
 
 const categoryLabelBySlug: Record<string, string> = {
   "hot-tubs": "Hot Tubs",
@@ -31,8 +28,7 @@ export default function CategoryItems() {
     return products?.filter((product) => product.categoryId === categorySlug);
   }, [products, categorySlug]);
 
-
- 
+  const navigate = useNavigate();
 
   return (
     <MainLayout>
@@ -46,7 +42,9 @@ export default function CategoryItems() {
             {t("categories", "Categories")}
           </Link>
           <ChevronRight size={14} />
-          <span className="font-medium text-main text-nowrap">{categoryName}</span>
+          <span className="font-medium text-main text-nowrap">
+            {categoryName}
+          </span>
         </div>
 
         <div className="mb-10">
@@ -58,7 +56,7 @@ export default function CategoryItems() {
             {categoryName.toLowerCase()}{" "}
             {t(
               "productsWillBeDisplayedHereUseThisPageToBrowseAllItemsInThisCategory",
-              "products will be displayed here. Use this page to browse all items in this category."
+              "products will be displayed here. Use this page to browse all items in this category.",
             )}
           </p>
         </div>
@@ -76,7 +74,7 @@ export default function CategoryItems() {
                 <p className="mt-1 text-sm text-main/75">
                   {t(
                     "viewWellisPdfForSpecifications",
-                    "View our Wellis brochure (PDF) for complete specifications, options, and technical information."
+                    "View our Wellis brochure (PDF) for complete specifications, options, and technical information.",
                   )}
                 </p>
               </div>
@@ -92,7 +90,7 @@ export default function CategoryItems() {
           </div>
         ) : null}
 
-         {categorySlug === "saunas" ? (
+        {categorySlug === "saunas" ? (
           <div className="mb-8 flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4 md:flex-row md:items-center md:justify-between md:p-5">
             <div className="flex gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
@@ -105,7 +103,7 @@ export default function CategoryItems() {
                 <p className="mt-1 text-sm text-main/75">
                   {t(
                     "viewHarviaPdfForSpecifications",
-                    "View our Saunas brochure (PDF) for complete specifications, options, and technical information."
+                    "View our Saunas brochure (PDF) for complete specifications, options, and technical information.",
                   )}
                 </p>
               </div>
@@ -127,57 +125,70 @@ export default function CategoryItems() {
           </div>
         ) : filteredProducts && filteredProducts?.length > 0 ? (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {filteredProducts?.map((product) => (
+            {filteredProducts?.map((product) =>
               (() => {
                 const imageUrl = product.images?.[0] ?? product.image ?? "";
                 return (
-              <div
-                key={product.id}
-                className="group relative overflow-hidden flex flex-col rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="aspect-[4/3] overflow-hidden bg-secondary">
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center text-sm text-muted bg-background">
-                      No image available
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-1 flex-col justify-between p-5">
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-primary">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm leading-relaxed text-main/75 line-clamp-2 whitespace-pre-wrap">
-                      {product.description}
-                    </p>
-                  </div>
-                  <div className="mt-6 flex items-center justify-between">
-                    <span className="font-space font-semibold text-primary text-xl">
-                      {product.price > 0 ? (
-                        <>{formatNumber(product.price)}</>
+                  <div
+                    key={product.id}
+                    onClick={() =>
+                      navigate(`/categories/${categorySlug}/${product.id}`)
+                    }
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        navigate(`/categories/${categorySlug}/${product.id}`);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    className="group relative overflow-hidden flex flex-col rounded-2xl border border-line bg-background transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <div className="aspect-[4/3] overflow-hidden bg-secondary">
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={product.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
                       ) : (
-                        <span className="text-sm text-muted">Call for Price</span>
+                        <div className="h-full w-full flex items-center justify-center text-sm text-muted bg-background">
+                          No image available
+                        </div>
                       )}
-                    </span>
-                    <Link
-                      to={`/categories/${categorySlug}/${product.id}`}
-                      className="rounded-full bg-primary/10 text-primary px-4 py-2 text-sm font-medium transition-colors hover:bg-primary hover:text-white"
-                    >
-                      {t("viewDetails", "Details")}
-                    </Link>
+                    </div>
+                    <div className="flex flex-1 flex-col justify-between p-5">
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-semibold text-primary">
+                          {product.name}
+                        </h3>
+                        <p className="text-sm leading-relaxed text-main/75 line-clamp-2 whitespace-pre-wrap">
+                          {product.description}
+                        </p>
+                      </div>
+                      <div className="mt-6 flex items-center justify-between">
+                        <span className="font-space font-semibold text-primary text-xl">
+                          {product.price > 0 ? (
+                            <>{formatNumber(product.price)}</>
+                          ) : (
+                            <span className="text-sm text-muted">
+                              Call for Price
+                            </span>
+                          )}
+                        </span>
+                        <Link
+                          to={`/categories/${categorySlug}/${product.id}`}
+                          className="rounded-full bg-primary/10 text-primary px-4 py-2 text-sm font-medium transition-colors hover:bg-primary hover:text-white"
+                        >
+                          {t("viewDetails", "Details")}
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
                 );
-              })()
-            ))}
+              })(),
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-line bg-secondary/30">
@@ -187,7 +198,7 @@ export default function CategoryItems() {
             <p className="mt-2 text-sm text-muted">
               {t(
                 "weAreCurrentlyUpdatingOurInventory",
-                "We are currently updating our inventory. Please check back later."
+                "We are currently updating our inventory. Please check back later.",
               )}
             </p>
           </div>
