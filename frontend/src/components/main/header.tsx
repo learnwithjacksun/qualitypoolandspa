@@ -52,7 +52,7 @@ export default function Header() {
                 rel="noreferrer"
                 className="flex items-center gap-2 text-nowrap hover:text-white/80 transition-colors"
               >
-                <MapPin size={14} className="shrink-0" /> {t('calahondaMarbellaMallorcaEstepona', 'Calahonda, Marbella,\r\n                Mallorca, Estepona')}
+                <MapPin size={14} className="shrink-0" /> {t('calahondaMarbellaMallorcaEstepona', 'Estepona')}
               </a>
               <a
                 href="mailto:info@qualitypoolspa.es"
