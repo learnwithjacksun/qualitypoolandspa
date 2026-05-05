@@ -126,54 +126,55 @@ export default function EditProduct() {
             className="space-y-6 bg-white grid grid-cols-1 md:grid-cols-2 gap-4"
           >
             <div className="space-y-6">
-              <label htmlFor="image" className="cursor-pointer">
-                <input
-                  type="file"
-                  name="image"
-                  id="image"
-                  className="hidden"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageChange}
-                />
-
-                {imagePreviews.length === 0 ? (
-                  <div className="flex items-center justify-center flex-col gap-2 min-h-[200px] border-dashed border-2 border-line rounded-lg p-4">
-                    <ImageIcon size={18} className="text-muted" />
-                    <p className="text-sm text-main">Upload Product Images</p>
-                    <p className="text-xs text-main/75">Max file size: 5MB</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      {imagePreviews.map((preview) => (
-                        <div
-                          key={preview}
-                          className="h-40 w-full rounded-lg overflow-hidden relative"
-                        >
-                          <img
-                            src={preview}
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
+              <div>
+                <label htmlFor="image" className="cursor-pointer">
+                  <input
+                    type="file"
+                    name="image"
+                    id="image"
+                    className="hidden"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                  />
+                  {imagePreviews.length === 0 ? (
+                    <div className="flex items-center justify-center flex-col gap-2 min-h-[200px] border-dashed border-2 border-line rounded-lg p-4">
+                      <ImageIcon size={18} className="text-muted" />
+                      <p className="text-sm text-main">Upload Product Images</p>
+                      <p className="text-xs text-main/75">Max file size: 5MB</p>
                     </div>
-                    <button
-                      onClick={(event) => {
-                        event.preventDefault();
-                        selectedImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
-                        setImages([]);
-                        setSelectedImagePreviews([]);
-                      }}
-                      type="button"
-                      className="bg-black/80 text-white rounded-full p-2"
-                    >
-                      <Trash2 size={18} className="text-red-500" /> Reset Selected Images
-                    </button>
-                  </div>
-                )}
-              </label>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        {imagePreviews.map((preview) => (
+                          <div
+                            key={preview}
+                            className="h-40 w-full rounded-lg overflow-hidden relative"
+                          >
+                            <img
+                              src={preview}
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <button
+                        onClick={(event) => {
+                          event.preventDefault();
+                          selectedImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+                          setImages([]);
+                          setSelectedImagePreviews([]);
+                        }}
+                        type="button"
+                        className="bg-black/80 text-white rounded-full p-2"
+                      >
+                        <Trash2 size={18} className="text-red-500" /> Reset Selected Images
+                      </button>
+                    </div>
+                  )}
+                </label>
+              </div>
 
               <div className="rounded-lg border border-line bg-secondary/40 p-4 space-y-2">
                 <p className="text-sm font-medium text-main">Color sample (optional)</p>
@@ -196,11 +197,11 @@ export default function EditProduct() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <div className="h-32 w-full rounded-lg overflow-hidden border border-line">
+                      <div className="h-auto w-full rounded-lg overflow-hidden border border-line">
                         <img
                           src={colorSampleDisplay}
                           alt="Color sample"
-                          className="w-full h-full object-cover"
+                          className="w-fit h-60 object-cover mx-auto"
                         />
                       </div>
                       {colorSampleImage ? (
