@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MainLayout } from "../layouts";
 import { ButtonWithLoader, InputWithoutIcon, SelectWithoutIcon } from "../components/ui";
-import { Image as ImageIcon, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Palette, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productSchema, type ProductSchema } from "../schemas/product";
@@ -15,6 +15,8 @@ export default function EditProduct() {
   const { products = [], isLoadingProducts, updateProduct, isLoading } = useProduct();
   const [images, setImages] = useState<File[]>([]);
   const [selectedImagePreviews, setSelectedImagePreviews] = useState<string[]>([]);
+  const [colorSampleImage, setColorSampleImage] = useState<File | null>(null);
+  const [colorSamplePreview, setColorSamplePreview] = useState<string | null>(null);
 
   const product = useMemo(() => {
     return products.find((item) => item.id === id) ?? null;
@@ -46,6 +48,20 @@ export default function EditProduct() {
     };
   }, [selectedImagePreviews]);
 
+  useEffect(() => {
+    return () => {
+      if (colorSamplePreview) URL.revokeObjectURL(colorSamplePreview);
+    };
+  }, [colorSamplePreview]);
+
+  const handleColorSampleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (colorSamplePreview) URL.revokeObjectURL(colorSamplePreview);
+    setColorSampleImage(file);
+    setColorSamplePreview(URL.createObjectURL(file));
+  };
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files ?? []);
     if (selectedFiles.length === 0) return;
@@ -56,7 +72,7 @@ export default function EditProduct() {
 
   const onSubmit = async (data: ProductSchema) => {
     if (!id) return;
-    const success = await updateProduct(id, data, images);
+    const success = await updateProduct(id, data, images, colorSampleImage);
     if (success) {
       navigate(`/products/${id}`);
     }
@@ -70,6 +86,9 @@ export default function EditProduct() {
       : [];
   const imagePreviews = selectedImagePreviews.length > 0 ? selectedImagePreviews : existingProductImages;
 
+  const colorSampleDisplay =
+    colorSamplePreview ?? product?.colorSampleImage ?? null;
+
   return (
     <MainLayout>
       <div className="main max-w-2xl mx-auto py-8">
@@ -79,7 +98,7 @@ export default function EditProduct() {
               Edit Product
             </h2>
             <p className="text-sm text-main/75">
-              Update product details and optionally replace the image.
+              Update product details, gallery images, and optional color sample.
             </p>
           </div>
           <Link
@@ -106,7 +125,7 @@ export default function EditProduct() {
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-6 bg-white grid grid-cols-1 md:grid-cols-2 gap-4"
           >
-            <div>
+            <div className="space-y-6">
               <label htmlFor="image" className="cursor-pointer">
                 <input
                   type="file"
@@ -155,6 +174,53 @@ export default function EditProduct() {
                   </div>
                 )}
               </label>
+
+              <div className="rounded-lg border border-line bg-secondary/40 p-4 space-y-2">
+                <p className="text-sm font-medium text-main">Color sample (optional)</p>
+                <p className="text-xs text-main/75">
+                  Replace the color reference image, or keep the current one.
+                </p>
+                <label htmlFor="color-sample" className="cursor-pointer block">
+                  <input
+                    type="file"
+                    id="color-sample"
+                    name="colorSample"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleColorSampleChange}
+                  />
+                  {!colorSampleDisplay ? (
+                    <div className="flex items-center justify-center flex-col gap-2 min-h-[120px] border-dashed border-2 border-line rounded-lg p-4">
+                      <Palette size={18} className="text-muted" />
+                      <p className="text-sm text-main">Upload color sample</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <div className="h-32 w-full rounded-lg overflow-hidden border border-line">
+                        <img
+                          src={colorSampleDisplay}
+                          alt="Color sample"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      {colorSampleImage ? (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            if (colorSamplePreview) URL.revokeObjectURL(colorSamplePreview);
+                            setColorSampleImage(null);
+                            setColorSamplePreview(null);
+                          }}
+                          className="text-sm text-red-600 flex items-center gap-1"
+                        >
+                          <Trash2 size={14} /> Discard new selection
+                        </button>
+                      ) : null}
+                    </div>
+                  )}
+                </label>
+              </div>
             </div>
 
             <div className="space-y-6">

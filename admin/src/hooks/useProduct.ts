@@ -13,7 +13,11 @@ export default function useProduct() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const createProduct = async (data: ProductSchema, images: File[]) => {
+    const createProduct = async (
+        data: ProductSchema,
+        images: File[],
+        colorSampleImageFile: File | null = null,
+    ) => {
         setIsLoading(true);
         try {
             if (images.length === 0) {
@@ -21,12 +25,15 @@ export default function useProduct() {
                 return false
             }
             const base64Images = await Promise.all(images.map((file) => toBase64(file)));
-            const payload = {
+            const payload: Record<string, unknown> = {
                 name: data.name,
                 categoryId: data.category,
                 description: data.description,
                 price: data.price,
                 images: base64Images,
+            }
+            if (colorSampleImageFile) {
+                payload.colorSampleImage = await toBase64(colorSampleImageFile);
             }
 
             const response = await api.post("/products", payload)
@@ -47,10 +54,15 @@ export default function useProduct() {
 
     }
 
-    const updateProduct = async (id: string, data: ProductSchema, images: File[]) => {
+    const updateProduct = async (
+        id: string,
+        data: ProductSchema,
+        images: File[],
+        colorSampleImageFile: File | null = null,
+    ) => {
         setIsLoading(true);
         try {
-            const payload = {
+            const payload: Record<string, unknown> = {
                 name: data.name,
                 categoryId: data.category,
                 description: data.description,
@@ -58,7 +70,10 @@ export default function useProduct() {
             }
             if (images.length > 0) {
                 const base64Images = await Promise.all(images.map((file) => toBase64(file)));
-                Object.assign(payload, { images: base64Images });
+                payload.images = base64Images;
+            }
+            if (colorSampleImageFile) {
+                payload.colorSampleImage = await toBase64(colorSampleImageFile);
             }
 
             const response = await api.patch(`/products/${id}`, payload)

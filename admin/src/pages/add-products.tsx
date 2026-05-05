@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MainLayout } from "../layouts";
 import { ButtonWithLoader, InputWithoutIcon, SelectWithoutIcon } from "../components/ui";
-import { Image as ImageIcon, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Palette, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productSchema, type ProductSchema } from "../schemas/product";
@@ -12,6 +12,8 @@ export default function AddProduct() {
   const { createProduct, isLoading } = useProduct();
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [colorSampleImage, setColorSampleImage] = useState<File | null>(null);
+  const [colorSamplePreview, setColorSamplePreview] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files ?? []);
@@ -26,6 +28,20 @@ export default function AddProduct() {
     };
   }, [imagePreviews]);
 
+  useEffect(() => {
+    return () => {
+      if (colorSamplePreview) URL.revokeObjectURL(colorSamplePreview);
+    };
+  }, [colorSamplePreview]);
+
+  const handleColorSampleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (colorSamplePreview) URL.revokeObjectURL(colorSamplePreview);
+    setColorSampleImage(file);
+    setColorSamplePreview(URL.createObjectURL(file));
+  };
+
   const {
     register,
     handleSubmit,
@@ -38,12 +54,15 @@ export default function AddProduct() {
  
 
   const onSubmit = async (data: ProductSchema) => {
-    const success = await createProduct(data, images);
+    const success = await createProduct(data, images, colorSampleImage);
     if (success) {
       reset();
       imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
       setImages([]);
       setImagePreviews([]);
+      if (colorSamplePreview) URL.revokeObjectURL(colorSamplePreview);
+      setColorSampleImage(null);
+      setColorSamplePreview(null);
     }
   };
 
@@ -63,53 +82,99 @@ export default function AddProduct() {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 bg-white grid grid-cols-1 md:grid-cols-2 gap-4"
         >
-          <div>
-            <label htmlFor="image" className="cursor-pointer">
-              <input
-                type="file"
-                name="image"
-                id="image"
-                className="hidden"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-              />
-              {images.length === 0 && imagePreviews.length === 0 ? (
-                <div className="flex items-center justify-center flex-col gap-2 min-h-[200px] border-dashed border-2 border-line rounded-lg p-4">
-                  <ImageIcon size={18} className="text-muted" />
-                  <p className="text-sm text-main">Upload Product Images</p>
-                  <p className="text-xs text-main/75">Max file size: 5MB</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    {imagePreviews.map((preview) => (
-                      <div
-                        key={preview}
-                        className="h-40 w-full rounded-lg overflow-hidden relative"
-                      >
-                        <img
-                          src={preview}
-                          alt="Selected product"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
+          <div className="space-y-6">
+            <div>
+              <label htmlFor="image" className="cursor-pointer">
+                <input
+                  type="file"
+                  name="image"
+                  id="image"
+                  className="hidden"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                />
+                {images.length === 0 && imagePreviews.length === 0 ? (
+                  <div className="flex items-center justify-center flex-col gap-2 min-h-[200px] border-dashed border-2 border-line rounded-lg p-4">
+                    <ImageIcon size={18} className="text-muted" />
+                    <p className="text-sm text-main">Upload Product Images</p>
+                    <p className="text-xs text-main/75">Max file size: 5MB</p>
                   </div>
-                  <button
-                    onClick={() => {
-                      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
-                      setImages([]);
-                      setImagePreviews([]);
-                    }}
-                    type="button"
-                    className="bg-black/80 text-white rounded-full p-2"
-                  >
-                    <Trash2 size={18} className="text-red-500" /> Remove Images
-                  </button>
-                </div>
-              )}
-            </label>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      {imagePreviews.map((preview) => (
+                        <div
+                          key={preview}
+                          className="h-40 w-full rounded-lg overflow-hidden relative"
+                        >
+                          <img
+                            src={preview}
+                            alt="Selected product"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => {
+                        imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+                        setImages([]);
+                        setImagePreviews([]);
+                      }}
+                      type="button"
+                      className="bg-black/80 text-white rounded-full p-2"
+                    >
+                      <Trash2 size={18} className="text-red-500" /> Remove Images
+                    </button>
+                  </div>
+                )}
+              </label>
+            </div>
+
+            <div className="rounded-lg border border-line bg-secondary/40 p-4 space-y-2">
+              <p className="text-sm font-medium text-main">Color sample (optional)</p>
+              <p className="text-xs text-main/75">
+                Upload a swatch or reference image for finishes / colors.
+              </p>
+              <label htmlFor="color-sample" className="cursor-pointer block">
+                <input
+                  type="file"
+                  id="color-sample"
+                  name="colorSample"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleColorSampleChange}
+                />
+                {!colorSamplePreview ? (
+                  <div className="flex items-center justify-center flex-col gap-2 min-h-[120px] border-dashed border-2 border-line rounded-lg p-4">
+                    <Palette size={18} className="text-muted" />
+                    <p className="text-sm text-main">Upload color sample</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="h-auto w-full rounded-lg overflow-hidden border border-line">
+                      <img
+                        src={colorSamplePreview}
+                        alt="Color sample preview"
+                        className="w-fit h-60 object-cover mx-auto"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (colorSamplePreview) URL.revokeObjectURL(colorSamplePreview);
+                        setColorSampleImage(null);
+                        setColorSamplePreview(null);
+                      }}
+                      className="text-sm text-red-600 flex items-center gap-1"
+                    >
+                      <Trash2 size={14} /> Remove color sample
+                    </button>
+                  </div>
+                )}
+              </label>
+            </div>
           </div>
 
           <div className="space-y-6">

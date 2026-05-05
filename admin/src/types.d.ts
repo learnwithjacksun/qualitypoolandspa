@@ -59,6 +59,7 @@ interface IProduct {
     categoryId: string;
     image?: string;
     images?: string[];
+    colorSampleImage?: string;
     price: number;
     description: string;
     createdAt: Date;

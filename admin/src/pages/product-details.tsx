@@ -4,7 +4,7 @@ import { useProduct } from "../hooks";
 import { useMemo } from "react";
 import { productCategories } from "../constant/data";
 import { formatNumber } from "../helpers/formatNumber";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Palette } from "lucide-react";
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
@@ -107,6 +107,18 @@ export default function ProductDetails() {
                 <p className="text-sm leading-relaxed text-main/80 whitespace-pre-wrap">
                   {product.description || "No description available."}
                 </p>
+
+                {product.colorSampleImage ? (
+                  <div className="rounded-xl border border-line bg-secondary/40 p-4">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted flex items-center gap-2">
+                      <Palette size={14} aria-hidden />
+                      Color sample
+                    </p>
+                    <div className="border-y border-line mt-6 py-6 overflow-hidden">
+                      <img src={product.colorSampleImage} alt="" />
+                    </div>
+                  </div>
+                ) : null}
 
                 <div className="rounded-xl bg-secondary px-4 py-3">
                   <p className="text-xs uppercase tracking-wide text-muted">

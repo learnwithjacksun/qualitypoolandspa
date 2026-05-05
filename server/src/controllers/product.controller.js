@@ -17,8 +17,11 @@ const normalizeImagePayload = (images, image) => {
   return [];
 };
 
+const hasColorSamplePayload = (value) =>
+  typeof value === "string" && value.trim() !== "";
+
 export const createProduct = async (req, res) => {
-  const { name, categoryId, price, image, images, description } = req.body;
+  const { name, categoryId, price, image, images, description, colorSampleImage } = req.body;
 
   try {
     const imageInputs = normalizeImagePayload(images, image);
@@ -33,6 +36,14 @@ export const createProduct = async (req, res) => {
     const imageUrls = uploadedImages.map((item) => item.imageUrl);
     const imagePublicIds = uploadedImages.map((item) => item.publicIdImage);
 
+    let colorSampleUrl = undefined;
+    let colorSamplePublicId = undefined;
+    if (hasColorSamplePayload(colorSampleImage)) {
+      const uploaded = await uploadImage(colorSampleImage);
+      colorSampleUrl = uploaded.imageUrl;
+      colorSamplePublicId = uploaded.publicIdImage;
+    }
+
     const product = await ProductModel.create({
       name,
       categoryId,
@@ -40,6 +51,10 @@ export const createProduct = async (req, res) => {
       imagesPublicId: imagePublicIds,
       price,
       description,
+      ...(colorSampleUrl !== undefined && {
+        colorSampleImage: colorSampleUrl,
+        colorSamplePublicId: colorSamplePublicId,
+      }),
     });
     return res.status(201).json({
       message: "Product created successfully",
@@ -94,7 +109,7 @@ export const getProductByCategory = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, categoryId, price, image, images, description } = req.body;
+    const { name, categoryId, price, image, images, description, colorSampleImage } = req.body;
 
     const existingProduct = await ProductModel.findById(id);
     if (!existingProduct) {
@@ -122,6 +137,15 @@ export const updateProduct = async (req, res) => {
       const uploadedImages = await Promise.all(imageInputs.map((item) => uploadImage(item)));
       updatePayload.images = uploadedImages.map((item) => item.imageUrl);
       updatePayload.imagesPublicId = uploadedImages.map((item) => item.publicIdImage);
+    }
+
+    if (hasColorSamplePayload(colorSampleImage)) {
+      if (existingProduct.colorSamplePublicId) {
+        await deleteImage(existingProduct.colorSamplePublicId);
+      }
+      const uploaded = await uploadImage(colorSampleImage);
+      updatePayload.colorSampleImage = uploaded.imageUrl;
+      updatePayload.colorSamplePublicId = uploaded.publicIdImage;
     }
 
     const updatedProduct = await ProductModel.findByIdAndUpdate(
@@ -159,6 +183,10 @@ export const deleteProduct = async (req, res) => {
 
     if (publicIdsToDelete.length > 0) {
       await Promise.all(publicIdsToDelete.map((publicId) => deleteImage(publicId)));
+    }
+
+    if (product.colorSamplePublicId) {
+      await deleteImage(product.colorSamplePublicId);
     }
 
     await ProductModel.findByIdAndDelete(id);

@@ -46,6 +46,14 @@ const productSchema = new Schema(
       type: String,
       required: false,
     },
+    colorSampleImage: {
+      type: String,
+      required: false,
+    },
+    colorSamplePublicId: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

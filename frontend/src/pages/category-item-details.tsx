@@ -171,9 +171,9 @@ export default function CategoryItemDetails() {
                   t("noDescriptionAvailable", "No description available.")}
               </p>
 
-                  {categorySlug === "hot-tubs" && (
+                  {categorySlug === "hot-tubs" && product.colorSampleImage && (
                     <div className="border-y border-line mt-6 py-6 overflow-hidden">
-                      <img src="/hottubs.jpg" alt=""  />
+                      <img src={product.colorSampleImage} alt=""  />
                     </div>
               )}
 
