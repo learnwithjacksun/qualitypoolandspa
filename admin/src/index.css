@@ -96,7 +96,5 @@ button,
   position: fixed;
   top: 70px;
   right: 3%;
-  width: 100px;
-  font-size: 12px;
   z-index: 999;
 }
