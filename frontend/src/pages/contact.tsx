@@ -237,7 +237,7 @@ export default function Contact() {
                   {selectedLocation.phone}
                 </a>
                 <a
-                  href={`https://wa.me/${selectedLocation.whatsapp.replace(/[^\d]/g, "")}`}
+                  href={`https://wa.me/${selectedLocation?.whatsapp?.replace(/[^\d]/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-2.5 transition-colors hover:text-primary"

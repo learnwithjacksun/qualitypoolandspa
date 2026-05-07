@@ -98,3 +98,10 @@ button,
   right: 3%;
   z-index: 999;
 }
+
+/* GTranslate (float.js) dropdown spacing + overflow safety */
+.gt_float_switcher .gt_options {
+  margin-top: 20px !important;
+  max-height: calc(100vh - 140px) !important;
+  overflow: auto !important;
+}

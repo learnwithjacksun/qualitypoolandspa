@@ -33,7 +33,8 @@ export default function CategoryItemDetails() {
 
   const productImages = useMemo(() => {
     if (!product) return [];
-    if (Array.isArray(product.images) && product.images.length > 0) return product.images;
+    if (Array.isArray(product.images) && product.images.length > 0)
+      return product.images;
     if (product.image) return [product.image];
     return [];
   }, [product]);
@@ -69,6 +70,7 @@ export default function CategoryItemDetails() {
 
     return `mailto:info@qualitypoolspa.es?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }, [categoryName, product, t]);
+
 
   return (
     <MainLayout>
@@ -178,10 +180,10 @@ export default function CategoryItemDetails() {
                   t("noDescriptionAvailable", "No description available.")}
               </p>
 
-                  {categorySlug === "hot-tubs" && product.colorSampleImage && (
-                    <div className="border-y border-line mt-6 py-6 overflow-hidden">
-                      <img src={product.colorSampleImage} alt=""  />
-                    </div>
+              {categorySlug === "hot-tubs" && product.colorSampleImage && (
+                <div className="border-y border-line mt-6 py-6 overflow-hidden">
+                  <img src={product.colorSampleImage} alt="" />
+                </div>
               )}
 
               <div className="mt-6 rounded-xl border border-line bg-secondary px-4 py-3">

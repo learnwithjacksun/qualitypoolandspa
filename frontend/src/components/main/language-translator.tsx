@@ -14,6 +14,7 @@ declare global {
   interface Window {
     gtranslateSettings: GTranslateSettings;
     doGTranslate?: (langPair: string) => void;
+    applySavedTranslation?: () => boolean;
   }
 }
 
@@ -59,9 +60,17 @@ const tryApplySavedTranslation = (): boolean => {
 let lastInjectedPath: string | null = null;
 let cookieWatchIntervalId: number | null = null;
 let lastGoogtransCookieValue: string | null = null;
+let contentObserver: MutationObserver | null = null;
+let contentObserverDebounceTimeoutId: number | null = null;
+let lastTranslationApplyAtMs = 0;
 
 const GTranslate = () => {
   const location = useLocation();
+
+  useEffect(() => {
+    // Make translation callable from anywhere in the app (dynamic pages, etc).
+    window.applySavedTranslation = tryApplySavedTranslation;
+  }, []);
 
   useEffect(() => {
     // Global settings used by the gtranslate widget script.
@@ -106,7 +115,7 @@ const GTranslate = () => {
         if (attempts >= maxAttempts) {
           window.clearInterval(intervalId);
         }
-      }, 250);
+      }, 100);
 
       return () => {
         window.clearInterval(intervalId);
@@ -132,7 +141,48 @@ const GTranslate = () => {
 
       lastGoogtransCookieValue = currentCookieValue;
       tryApplySavedTranslation();
-    }, 300);
+    }, 100);
+  }, []);
+
+  useEffect(() => {
+    // Dynamic pages render content asynchronously after route change.
+    // Re-apply translation for meaningful DOM updates while translated.
+    if (contentObserver) return;
+
+    const targetNode = document.querySelector("main") ?? document.body;
+
+    contentObserver = new MutationObserver(() => {
+      if (!getLangPairFromGoogtransCookie()) return;
+
+      const now = Date.now();
+      if (now - lastTranslationApplyAtMs < 1200) return;
+
+      if (contentObserverDebounceTimeoutId !== null) {
+        window.clearTimeout(contentObserverDebounceTimeoutId);
+      }
+
+      contentObserverDebounceTimeoutId = window.setTimeout(() => {
+        if (tryApplySavedTranslation()) {
+          lastTranslationApplyAtMs = Date.now();
+        }
+      }, 350);
+    });
+
+    contentObserver.observe(targetNode, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    return () => {
+      contentObserver?.disconnect();
+      contentObserver = null;
+
+      if (contentObserverDebounceTimeoutId !== null) {
+        window.clearTimeout(contentObserverDebounceTimeoutId);
+        contentObserverDebounceTimeoutId = null;
+      }
+    };
   }, []);
 
   return <div className="gtranslate_wrapper"></div>;
