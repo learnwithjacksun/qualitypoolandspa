@@ -4,9 +4,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "../schemas/auth";
 import { useAuth } from "../hooks";
+import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 export default function Auth() {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, admin, checkAuth } = useAuth();
   const {
     register,
     handleSubmit,
@@ -22,6 +24,14 @@ export default function Auth() {
   const onSubmit = (data: LoginSchema) => {
     login(data.email, data.password);
   };
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (admin) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return (
     <div className="bg-primary min-h-dvh">
