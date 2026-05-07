@@ -230,7 +230,7 @@ export default function Contact() {
                   {selectedLocation.email}
                 </a>
                 <a
-                  href={`tel:${selectedLocation?.phone.replace(/\s+/g, "")}`}
+                  href={`tel:${selectedLocation?.phone?.replaceAll(" ", "")}`}
                   className="flex items-center gap-2.5 transition-colors hover:text-primary"
                 >
                   <PhoneCall size={16} className="shrink-0 text-primary" />

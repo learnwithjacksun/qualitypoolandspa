@@ -6,37 +6,35 @@ import {
   PhoneCall,
   Mail,
   MapPin,
-  ChevronDown,
-  Globe,
   Menu,
 } from "lucide-react";
-import { MobileMenu } from ".";
+import { GTranslate, MobileMenu } from ".";
 import { navLinks } from "@/constants/data";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 export default function Header() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const activeLanguage = i18n.resolvedLanguage ?? i18n.language ?? "en";
-  const languages = useMemo(
-    () => [
-      { code: "en", name: t("english", "English") },
-      { code: "fr", name: t("french", "French") },
-      { code: "es", name: t("spanish", "Spanish") },
-      { code: "de", name: t("german", "German") },
-      { code: "sv", name: t("swedish", "Swedish") },
-      { code: "ru", name: t("russian", "Russian") },
-    ],
-    [t]
-  );
+  // const activeLanguage = i18n.resolvedLanguage ?? i18n.language ?? "en";
+  // const languages = useMemo(
+  //   () => [
+  //     { code: "en", name: t("english", "English") },
+  //     { code: "fr", name: t("french", "French") },
+  //     { code: "es", name: t("spanish", "Spanish") },
+  //     { code: "de", name: t("german", "German") },
+  //     { code: "sv", name: t("swedish", "Swedish") },
+  //     { code: "ru", name: t("russian", "Russian") },
+  //   ],
+  //   [t]
+  // );
 
-  const handleLanguageChange = async (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    await i18n.changeLanguage(event.target.value);
-  };
+  // const handleLanguageChange = async (
+  //   event: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   await i18n.changeLanguage(event.target.value);
+  // };
 
   return (
     <>
@@ -127,7 +125,8 @@ export default function Header() {
                 ))}
               </ul>
               {/* Language Selector */}
-              <label className="group relative">
+              <GTranslate />
+              {/* <label className="group relative">
                 <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 shrink-0 z-10" />
                 <select
                   className="h-10 appearance-none pl-8 pr-10 rounded-full border border-white/35 bg-white/10 text-sm font-medium text-white backdrop-blur-md transition-all hover:bg-white/15 focus-within:ring-2 focus-within:ring-white/70"
@@ -149,11 +148,12 @@ export default function Header() {
                   size={16}
                   className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-80 transition-transform group-focus-within:rotate-180"
                 />
-              </label>
+              </label> */}
             </div>
 
             <div className="flex md:hidden items-center gap-4">
-              <label className="group relative">
+              <GTranslate />
+              {/* <label className="group relative">
                 <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 shrink-0 z-10" />
                 <select
                   className="h-10 appearance-none pl-8 pr-10 rounded-full border border-white/35 bg-white/10 text-sm font-medium text-white backdrop-blur-md transition-all hover:bg-white/15 focus-within:ring-2 focus-within:ring-white/70"
@@ -175,7 +175,7 @@ export default function Header() {
                   size={16}
                   className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-80 transition-transform group-focus-within:rotate-180"
                 />
-              </label>
+              </label> */}
 
               <div>
                 <button onClick={() => setIsOpen(true)}>

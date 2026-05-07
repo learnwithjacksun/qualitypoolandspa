@@ -5,6 +5,7 @@ import { Menu, LogOut } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import MobileMenu from "./mobile-menu";
 import { useAuth } from "../../hooks";
+import GTranslate from "./language-translator";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,6 +26,9 @@ export default function Header() {
               className="h-5 md:h-7 w-auto"
             />
           </Link>
+
+          <GTranslate />
+
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-8">

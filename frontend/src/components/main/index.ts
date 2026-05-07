@@ -3,3 +3,4 @@ export { default as Footer } from "./footer";
 export { default as Hero } from "./hero";
 export { default as Collection } from "./collection";
 export { default as MobileMenu } from "./mobile-menu";
+export { default as GTranslate } from "./language-translator";
