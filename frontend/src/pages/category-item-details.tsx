@@ -41,6 +41,21 @@ export default function CategoryItemDetails() {
   const [selectedImage, setSelectedImage] = useState<string>("");
 
   useEffect(() => {
+    const reloadKey = `category-item-details-last-reload:${categorySlug}:${productId}`;
+    const lastReloadRaw = sessionStorage.getItem(reloadKey);
+    const lastReloadTimestamp = lastReloadRaw ? Number(lastReloadRaw) : 0;
+    const RELOAD_COOLDOWN_MS = 1500;
+    const isWithinCooldown =
+      Number.isFinite(lastReloadTimestamp) &&
+      Date.now() - lastReloadTimestamp < RELOAD_COOLDOWN_MS;
+
+    if (isWithinCooldown) return;
+
+    sessionStorage.setItem(reloadKey, String(Date.now()));
+    window.location.reload();
+  }, [categorySlug, productId]);
+
+  useEffect(() => {
     setSelectedImage(productImages[0] ?? "");
   }, [productImages]);
 
