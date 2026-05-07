@@ -40,8 +40,8 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 w-full">
         {/* TOP BAR */}
-        <div className="w-full bg-white border-b border-gray-200 text-sm hidden md:block">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2">
+        <div className="w-full bg-white border-b border-gray-200 text-sm">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 flex-wrap">
             {/* Left: Contact */}
             <div className="flex items-center gap-6 text-xs">
               <a
@@ -54,7 +54,7 @@ export default function Header() {
               </a>
               <a
                 href="mailto:info@qualitypoolspa.es"
-                className="flex items-center gap-2 text-nowrap hover:text-white/80 transition-colors"
+                className="hidden md:flex items-center gap-2 text-nowrap hover:text-white/80 transition-colors"
               >
                 <Mail size={14} className="shrink-0" /> info@qualitypoolspa.es
               </a>
@@ -71,7 +71,7 @@ export default function Header() {
                 <PhoneCall size={14} className="shrink-0" /> {t('bookACall', 'Book a Call')}
               </a>
               {/* Socials */}
-              <div className="flex items-center gap-4 text-gray-500">
+              <div className="hidden md:flex items-center gap-4 text-gray-500">
                 <Facebook
                   size={16}
                   className="hover:text-[mediumslateblue] cursor-pointer"

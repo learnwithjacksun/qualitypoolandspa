@@ -44,10 +44,21 @@ const getLangPairFromGoogtransCookie = (): string | null => {
   return `${source}|${target}`;
 };
 
+const tryApplySavedTranslation = (): boolean => {
+  const langPair = getLangPairFromGoogtransCookie();
+  if (!langPair) return false;
+  if (typeof window.doGTranslate !== "function") return false;
+
+  window.doGTranslate(langPair);
+  return true;
+};
+
 // Header renders `GTranslate` twice (desktop + mobile). When React re-renders
 // on navigation, both instances will run effects; we only want one script
 // injection per route change to avoid conflicts.
 let lastInjectedPath: string | null = null;
+let cookieWatchIntervalId: number | null = null;
+let lastGoogtransCookieValue: string | null = null;
 
 const GTranslate = () => {
   const location = useLocation();
@@ -80,18 +91,14 @@ const GTranslate = () => {
     document.body.appendChild(script);
 
     // gtranslate does not always translate newly-rendered DOM in SPAs.
-    // After route change, force translation using the last selected language
-    // stored in the `googtrans` cookie.
-    const langPair = getLangPairFromGoogtransCookie();
-
-    if (langPair) {
+    // After route change, force translation using the last selected language.
+    if (getLangPairFromGoogtransCookie()) {
       let attempts = 0;
       const maxAttempts = 20;
 
       const intervalId = window.setInterval(() => {
         attempts += 1;
-        if (typeof window.doGTranslate === "function") {
-          window.doGTranslate(langPair);
+        if (tryApplySavedTranslation()) {
           window.clearInterval(intervalId);
           return;
         }
@@ -111,6 +118,22 @@ const GTranslate = () => {
       // document.body.removeChild(script);
     };
   }, [location.pathname]);
+
+  useEffect(() => {
+    // Apply translation immediately when user changes language on first load.
+    // The widget updates `googtrans`; we detect that change and call doGTranslate.
+    if (cookieWatchIntervalId !== null) return;
+
+    cookieWatchIntervalId = window.setInterval(() => {
+      const currentCookieValue = getCookie("googtrans");
+      if (!currentCookieValue || currentCookieValue === lastGoogtransCookieValue) {
+        return;
+      }
+
+      lastGoogtransCookieValue = currentCookieValue;
+      tryApplySavedTranslation();
+    }, 300);
+  }, []);
 
   return <div className="gtranslate_wrapper"></div>;
 };
