@@ -30,7 +30,7 @@ export default function MobileMenu({ onClose, isOpen }: MobileMenuProps) {
       animate={{ opacity: 1, scaleY: 1 }}
       exit={{ opacity: 0, scaleY: 0 }}
       // transition={{ duration: 0.2 }}
-      className="fixed origin-top inset-0 bg-primary/90 backdrop-blur-sm z-100"
+      className="fixed origin-top inset-0 bg-primary backdrop-blur-sm z-100"
     >
       <header className="flex items-center justify-between main min-h-[70px]">
         <img src="/logo.png" alt="logo" className="w-auto h-6" />
