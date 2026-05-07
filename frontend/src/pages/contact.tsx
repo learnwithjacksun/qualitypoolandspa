@@ -15,7 +15,6 @@ import { contactSchema, type ContactSchema } from "@/schemas/contact";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from 'react-i18next'
-import i18next from 'i18next'
 
 interface OfficeLocation {
   name: string;
@@ -30,34 +29,31 @@ interface OfficeLocation {
 
 const officeLocations: OfficeLocation[] = [
   {
-    name: i18next.t('marbella', 'Marbella'),
-    address:
-      i18next.t('qualityPoolSpaComplejoLidlCBeamarDeCalahondaLocal529649CalahondaMalagaSpain', 'Quality Pool & Spa, Complejo Lidl, C. Beamar de Calahonda, local 5, 29649 Calahonda, Malaga, Spain'),
+    name: "Marbella" ,
+    address: "Quality Pool & Spa, Complejo Lidl, C. Beamar de Calahonda, local 5, 29649 Calahonda, Malaga, Spain",
     email: "info@qualitypoolspa.es",
-    phone: i18next.t('34951172808', '+34 951 17 28 08'),
-    whatsapp: i18next.t('34648126377', '+34 648 12 63 77'),
+    phone: "+34 951 17 28 08",
+    whatsapp: "+34 648 12 63 77",
     facebook: "qualitypoolspain",
     instagram: "@qualitypoolspa.es",
     youtube: "@qualitypoolspa.es",
   },
   {
-    name: i18next.t('mallorca', 'Mallorca'),
-    address:
-      i18next.t('qualitypoolSpaMallorcaCarrerDanselmTurmeda9Nord07010PalmaIllesBalearsSpain', 'Qualitypool & Spa Mallorca, Carrer d\'Anselm Turmeda, 9, Nord, 07010 Palma, Illes Balears, Spain'),
+    name: "Mallorca",
+    address: "Qualitypool & Spa Mallorca, Carrer d'Anselm Turmeda, 9, Nord, 07010 Palma, Illes Balears, Spain",
     email: "estepona@qualitypoolspa.es",
-    phone: i18next.t('34951172808', '+34 951 17 28 08'),
+    phone: "+34 951 17 28 08",
     whatsapp: "+34 648448875",
     facebook: "qualitypoolspain",
     instagram: "@qualitypoolspa.es",
     youtube: "@qualitypoolspa.es",
   },
   {
-    name: i18next.t('qualityPoolsEstepona', 'Quality Pools Estepona'),
-    address:
-      i18next.t('qualitypoolSpaEsteponaAvPuertaDelMar5929680EsteponaMalagaSpain', 'Qualitypool & Spa Estepona, Av. Puerta del Mar, 59, 29680 Estepona, Malaga, Spain'),
+    name: "Quality Pools Estepona",
+    address: "Qualitypool & Spa Estepona, Av. Puerta del Mar, 59, 29680 Estepona, Malaga, Spain",
     email: "estepona@qualitypoolspa.es",
-    phone: i18next.t('34951172808', '+34 951 17 28 08'),
-    whatsapp: i18next.t('34638959111', '+34 638 959 111'),
+    phone: "+34 951 17 28 08",
+    whatsapp: "+34 638 959 111",
     facebook: "qualitypoolspain",
     instagram: "@qualitypoolspa.es",
     youtube: "@qualitypoolspa.es",
